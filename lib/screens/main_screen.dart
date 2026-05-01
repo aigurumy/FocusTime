@@ -4,6 +4,10 @@ import 'timer_screen.dart';
 import 'insight_screen.dart';
 import 'setting_screen.dart';
 import 'goal_screen.dart';
+import '../providers/timer_provider.dart';
+import '../providers/settings_provider.dart';
+import '../providers/goal_provider.dart';
+import '../widgets/achievement_dialog.dart';
 
 class NavigationIndexNotifier extends Notifier<int> {
   @override
@@ -23,6 +27,33 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Global listener for timer completion to show achievement dialog on any page
+    ref.listen<TimerState>(timerProvider, (previous, next) {
+      if (previous?.remainingSeconds != 0 && next.remainingSeconds == 0 && next.mode == TimerMode.focus && next.initialSeconds > 0) {
+        final currentSettings = ref.read(settingsProvider);
+        final taskName = currentSettings.currentTask.isEmpty ? 'My Focus Task' : currentSettings.currentTask;
+        final focusMinutes = next.initialSeconds ~/ 60;
+
+        // Log focus minutes to matching goal
+        final goals = ref.read(activeGoalsProvider);
+        for (final goal in goals) {
+          if (goal.name == taskName) {
+            ref.read(goalProvider.notifier).logFocusMinutes(goal.id, focusMinutes);
+            break;
+          }
+        }
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AchievementDialog(
+            topic: taskName,
+            durationMinutes: focusMinutes,
+          ),
+        );
+      }
+    });
+
     final currentIndex = ref.watch(navigationIndexProvider);
 
     final List<Widget> screens = [

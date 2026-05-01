@@ -19,32 +19,6 @@ class TimerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<TimerState>(timerProvider, (previous, next) {
-      if (previous?.remainingSeconds != 0 && next.remainingSeconds == 0 && next.mode == TimerMode.focus && next.initialSeconds > 0) {
-        final currentSettings = ref.read(settingsProvider);
-        final taskName = currentSettings.currentTask.isEmpty ? 'My Focus Task' : currentSettings.currentTask;
-        final focusMinutes = next.initialSeconds ~/ 60;
-
-        // Log focus minutes to matching goal
-        final goals = ref.read(activeGoalsProvider);
-        for (final goal in goals) {
-          if (goal.name == taskName) {
-            ref.read(goalProvider.notifier).logFocusMinutes(goal.id, focusMinutes);
-            break;
-          }
-        }
-
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AchievementDialog(
-            topic: taskName,
-            durationMinutes: focusMinutes,
-          ),
-        );
-      }
-    });
-
     final timerState = ref.watch(timerProvider);
     final timerNotifier = ref.read(timerProvider.notifier);
     final settings = ref.watch(settingsProvider);
@@ -215,7 +189,7 @@ class TimerScreen extends ConsumerWidget {
                       ),
 
                       // Time Scroller / Spacer
-                      if (!timerState.isRunning && timerState.mode == TimerMode.focus) ...[
+                      if (!timerState.isRunning && timerState.mode == TimerMode.focus && timerState.remainingSeconds == timerState.initialSeconds) ...[
                         const SizedBox(height: 20),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -265,7 +239,7 @@ class TimerScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 20),
                       ] else ...[
-                        const Spacer(flex: 2),
+                        const SizedBox(height: 20),
                       ],
 
                       // Timer Controls
@@ -504,7 +478,7 @@ class TimerScreen extends ConsumerWidget {
                         },
                       ),
 
-                      const SizedBox(height: 27),
+                      const SizedBox(height: 20),
 
                       // Achievement Card
                       if (achievements.isEmpty)
