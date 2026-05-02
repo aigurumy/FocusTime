@@ -119,12 +119,12 @@ class MainScreen extends ConsumerWidget {
                 children: [
                   Icon(
                     Icons.schedule, 
-                    size: 26,
+                    size: 32, // Increased from 26
                     color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
                   ),
                   Positioned(
-                    right: -1,
-                    bottom: -1,
+                    right: -2,
+                    bottom: -2,
                     child: Container(
                       decoration: const BoxDecoration(
                         color: Colors.white,
@@ -132,7 +132,7 @@ class MainScreen extends ConsumerWidget {
                       ),
                       child: Icon(
                         Icons.play_arrow_rounded, 
-                        size: 14, 
+                        size: 18, // Increased from 14
                         color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
                       ),
                     ),
