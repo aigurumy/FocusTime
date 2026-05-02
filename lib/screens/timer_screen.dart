@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'main_screen.dart'; // Add this for navigationIndexProvider
 import '../providers/timer_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/achievement_provider.dart';
@@ -618,19 +619,24 @@ class TimerScreen extends ConsumerWidget {
                                     );
                                   }),
                                   const SizedBox(height: 8),
-                                  const Row(
-                                    children: [
-                                      Text(
-                                        'Click for more',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w500,
+                                  InkWell(
+                                    onTap: () {
+                                      ref.read(navigationIndexProvider.notifier).setIndex(0, scrollToBottom: true);
+                                    },
+                                    child: const Row(
+                                      children: [
+                                        Text(
+                                          'Click for more',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(width: 8),
-                                      Icon(Icons.arrow_forward, size: 16, color: Colors.black87),
-                                    ],
+                                        SizedBox(width: 8),
+                                        Icon(Icons.arrow_forward, size: 16, color: Colors.black87),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ],

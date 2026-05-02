@@ -4,21 +4,32 @@ import 'timer_screen.dart';
 import 'insight_screen.dart';
 import 'setting_screen.dart';
 import 'goal_screen.dart';
+import 'profile_screen.dart';
 import '../providers/timer_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/goal_provider.dart';
 import '../widgets/achievement_dialog.dart';
 
-class NavigationIndexNotifier extends Notifier<int> {
-  @override
-  int build() => 2; // Default to Focus page
+class NavigationState {
+  final int index;
+  final bool scrollToBottom;
+  NavigationState({required this.index, this.scrollToBottom = false});
+}
 
-  void setIndex(int index) {
-    state = index;
+class NavigationIndexNotifier extends Notifier<NavigationState> {
+  @override
+  NavigationState build() => NavigationState(index: 2); // Default to Focus page
+
+  void setIndex(int index, {bool scrollToBottom = false}) {
+    state = NavigationState(index: index, scrollToBottom: scrollToBottom);
+  }
+
+  void clearScrollFlag() {
+    state = NavigationState(index: state.index, scrollToBottom: false);
   }
 }
 
-final navigationIndexProvider = NotifierProvider<NavigationIndexNotifier, int>(() {
+final navigationIndexProvider = NotifierProvider<NavigationIndexNotifier, NavigationState>(() {
   return NavigationIndexNotifier();
 });
 
@@ -54,14 +65,15 @@ class MainScreen extends ConsumerWidget {
       }
     });
 
-    final currentIndex = ref.watch(navigationIndexProvider);
+    final navState = ref.watch(navigationIndexProvider);
+    final currentIndex = navState.index;
 
     final List<Widget> screens = [
       const InsightScreen(),
       const GoalScreen(),
       const TimerScreen(), // Focus page
       const SettingsScreenView(), // Setting page
-      const Center(child: Text("Profile Page")),
+      const ProfileScreen(),
     ];
 
     return Scaffold(

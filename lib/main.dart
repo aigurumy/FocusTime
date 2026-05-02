@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'screens/main_screen.dart';
+import 'providers/settings_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,13 +31,24 @@ void main() async {
   await flutterLocalNotificationsPlugin.initialize(settings: initializationSettings);
 
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => const ProviderScope(
-        child: FocusTimeApp(),
-      ),
+    const ProviderScope(
+      child: FocusTimeAppWrapper(),
     ),
   );
+}
+
+class FocusTimeAppWrapper extends ConsumerWidget {
+  const FocusTimeAppWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDevicePreviewEnabled = ref.watch(settingsProvider.select((s) => s.isDevicePreviewEnabled));
+    
+    return DevicePreview(
+      enabled: !kReleaseMode && isDevicePreviewEnabled,
+      builder: (context) => const FocusTimeApp(),
+    );
+  }
 }
 
 class FocusTimeApp extends StatelessWidget {

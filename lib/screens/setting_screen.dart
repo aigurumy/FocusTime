@@ -216,6 +216,17 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
                         settingsNotifier.toggleDeepWorkShield(val);
                       },
                     ),
+                    const SizedBox(height: 12),
+
+                    _ToggleCard(
+                      icon: Icons.phonelink_setup_rounded,
+                      title: 'Device Preview',
+                      subtitle: 'Toggle device frame for testing\n(Debug mode only)',
+                      value: settings.isDevicePreviewEnabled,
+                      onChanged: (val) {
+                        settingsNotifier.toggleDevicePreview(val);
+                      },
+                    ),
                   ],
                 ),
               ),

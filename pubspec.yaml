@@ -39,6 +39,7 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   shared_preferences: ^2.5.5
   device_preview: ^1.2.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

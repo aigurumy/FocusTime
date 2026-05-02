@@ -7,12 +7,15 @@ class SettingsState {
   final bool rainSoundEnabled;
   final bool deepWorkShieldEnabled;
 
+  final bool isDevicePreviewEnabled;
+
   SettingsState({
     this.focusDuration = 45,
     this.breakDuration = 5,
     this.currentTask = '', // Empty by default
     this.rainSoundEnabled = true,
     this.deepWorkShieldEnabled = true,
+    this.isDevicePreviewEnabled = true,
   });
 
   SettingsState copyWith({
@@ -21,6 +24,7 @@ class SettingsState {
     String? currentTask,
     bool? rainSoundEnabled,
     bool? deepWorkShieldEnabled,
+    bool? isDevicePreviewEnabled,
   }) {
     return SettingsState(
       focusDuration: focusDuration ?? this.focusDuration,
@@ -28,6 +32,7 @@ class SettingsState {
       currentTask: currentTask ?? this.currentTask,
       rainSoundEnabled: rainSoundEnabled ?? this.rainSoundEnabled,
       deepWorkShieldEnabled: deepWorkShieldEnabled ?? this.deepWorkShieldEnabled,
+      isDevicePreviewEnabled: isDevicePreviewEnabled ?? this.isDevicePreviewEnabled,
     );
   }
 }
@@ -56,6 +61,10 @@ class SettingsNotifier extends Notifier<SettingsState> {
 
   void toggleDeepWorkShield(bool enabled) {
     state = state.copyWith(deepWorkShieldEnabled: enabled);
+  }
+
+  void toggleDevicePreview(bool enabled) {
+    state = state.copyWith(isDevicePreviewEnabled: enabled);
   }
 }
 

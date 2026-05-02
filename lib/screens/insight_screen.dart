@@ -1,12 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'main_screen.dart';
 import '../providers/achievement_provider.dart';
 
-class InsightScreen extends ConsumerWidget {
+class InsightScreen extends ConsumerStatefulWidget {
   const InsightScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<InsightScreen> createState() => _InsightScreenState();
+}
+
+class _InsightScreenState extends ConsumerState<InsightScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 600),
+          curve: Curves.easeOutQuart,
+        );
+        // Clear the flag after scrolling
+        ref.read(navigationIndexProvider.notifier).clearScrollFlag();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Listen for scroll flag
+    ref.listen<NavigationState>(navigationIndexProvider, (previous, next) {
+      if (next.index == 0 && next.scrollToBottom) {
+        _scrollToBottom();
+      }
+    });
+
+    // Check on initial build if we should scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navState = ref.read(navigationIndexProvider);
+      if (navState.index == 0 && navState.scrollToBottom) {
+        _scrollToBottom();
+      }
+    });
+
     const primaryBlue = Color(0xFF2879D9);
     const textDark = Color(0xFF3B4045);
     const textLight = Color(0xFF8E959E);
@@ -44,6 +87,7 @@ class InsightScreen extends ConsumerWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,51 +258,56 @@ class InsightScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 28),
 
-              // Recent Milestones Header
-              Row(
-                children: [
-                  Icon(Icons.workspace_premium, color: teal, size: 24),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Recent Milestones',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: textDark,
+              // Recent Milestones Card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: cardBg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: cardBorder, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.workspace_premium, color: teal, size: 24),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Recent Milestones',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: textDark,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 16),
+                    if (achievements.isEmpty)
+                      Center(
+                        child: Column(
+                          children: [
+                            Icon(Icons.emoji_events_outlined, size: 40, color: textLight.withAlpha(150)),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'No milestones yet.',
+                              style: TextStyle(fontSize: 14, color: textLight),
+                            ),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Complete focus sessions to see them here!',
+                              style: TextStyle(fontSize: 13, color: textLight),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      ...achievements.take(5).map((a) => _MilestoneItem(achievement: a)),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-
-              // Milestone List
-              if (achievements.isEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: cardBg,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: cardBorder, width: 1),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(Icons.emoji_events_outlined, size: 40, color: textLight.withAlpha(150)),
-                      const SizedBox(height: 12),
-                      const Text(
-                        'No milestones yet.',
-                        style: TextStyle(fontSize: 14, color: textLight),
-                      ),
-                      const SizedBox(height: 4),
-                      const Text(
-                        'Complete focus sessions to see them here!',
-                        style: TextStyle(fontSize: 13, color: textLight),
-                      ),
-                    ],
-                  ),
-                )
-              else
-                ...achievements.map((a) => _MilestoneCard(achievement: a)),
 
               const SizedBox(height: 20),
             ],
@@ -445,44 +494,36 @@ class _ChartPainter extends CustomPainter {
   bool shouldRepaint(covariant _ChartPainter oldDelegate) => true;
 }
 
-// ─── Milestone Card ───────────────────────────────────────────
-class _MilestoneCard extends StatelessWidget {
+// ─── Milestone Item (Inside Recent Milestones Card) ────────────
+class _MilestoneItem extends StatelessWidget {
   final Achievement achievement;
-  const _MilestoneCard({required this.achievement});
+  const _MilestoneItem({required this.achievement});
 
   @override
   Widget build(BuildContext context) {
     const teal = Color(0xFF26A69A);
     const textDark = Color(0xFF3B4045);
     const textLight = Color(0xFF8E959E);
-    const cardBg = Color(0xFFF4F3EE);
-    const cardBorder = Color(0xFFE6E4DC);
 
     final day = achievement.timestamp.day.toString();
     final months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     final month = months[achievement.timestamp.month - 1];
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cardBorder, width: 1),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
           // Teal circle icon
           Container(
-            width: 36,
-            height: 36,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               color: teal.withAlpha(30),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.flag_rounded, color: teal, size: 18),
+            child: const Icon(Icons.flag_rounded, color: teal, size: 16),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
 
           // Title and subtitle
           Expanded(
@@ -492,18 +533,17 @@ class _MilestoneCard extends StatelessWidget {
                 Text(
                   achievement.topic,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: textDark,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
                 Text(
                   achievement.log.isNotEmpty ? achievement.log : 'Focus session',
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 12,
                     color: textLight,
                   ),
                   maxLines: 1,
@@ -512,42 +552,26 @@ class _MilestoneCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
 
-          // Date
+          // Date and Duration
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                day,
+                '$day $month',
                 style: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 11,
                   fontWeight: FontWeight.w700,
                   color: textDark,
                 ),
               ),
               Text(
-                month,
+                '${achievement.durationMinutes}m',
                 style: const TextStyle(
                   fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: textLight,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: teal.withAlpha(30),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  '${achievement.durationMinutes}m',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: teal,
-                  ),
+                  fontWeight: FontWeight.w600,
+                  color: teal,
                 ),
               ),
             ],
