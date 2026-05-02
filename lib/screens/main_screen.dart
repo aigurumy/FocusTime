@@ -102,33 +102,30 @@ class MainScreen extends ConsumerWidget {
               label: 'Goal',
             ),
             BottomNavigationBarItem(
-              icon: Container(
-                margin: const EdgeInsets.only(bottom: 4),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Icon(
-                      Icons.schedule, 
-                      size: 28,
-                      color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
-                    ),
-                    Positioned(
-                      right: -2,
-                      bottom: -2,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.play_arrow_rounded, 
-                          size: 16, 
-                          color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
-                        ),
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Icon(
+                    Icons.schedule, 
+                    size: 26,
+                    color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
+                  ),
+                  Positioned(
+                    right: -1,
+                    bottom: -1,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.play_arrow_rounded, 
+                        size: 14, 
+                        color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               label: 'Focus',
             ),
