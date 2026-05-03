@@ -253,23 +253,39 @@ class TimerScreen extends ConsumerWidget {
                                 timerNotifier.pause();
                               },
                               child: Container(
-                                width: 160,
-                                padding: const EdgeInsets.symmetric(vertical: 12),
-                                alignment: Alignment.center,
+                                width: 140,
+                                padding: const EdgeInsets.all(2.5), // The gradient border width
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: const Color(0xFFCE93D8),
-                                    width: 1.2,
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF6A1B9A), Color(0xFFCE93D8)],
+                                    begin: Alignment.bottomLeft,
+                                    end: Alignment.topRight,
                                   ),
+                                  borderRadius: BorderRadius.circular(50),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                                child: const Text(
-                                  'Pause',
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      'Pause',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF37474F), // Dark slate grey
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -285,22 +301,37 @@ class TimerScreen extends ConsumerWidget {
                                   },
                                   child: Container(
                                     width: 140,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(2.5),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: const Color(0xFFCE93D8),
-                                        width: 1.2,
+                                      gradient: const LinearGradient(
+                                        colors: [Color(0xFF2196F3), Color(0xFF6A1B9A)],
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight,
                                       ),
+                                      borderRadius: BorderRadius.circular(50),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
-                                    child: const Text(
-                                      'Continue',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'Continue',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF37474F),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -409,26 +440,37 @@ class TimerScreen extends ConsumerWidget {
                                   },
                                   child: Container(
                                     width: 140,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.all(2.5),
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
-                                        colors: [Color(0xFFFFF0F5), Color(0xFFFCE4EC)],
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
+                                        colors: [Color(0xFFE91E63), Color(0xFFFF80AB)],
+                                        begin: Alignment.bottomLeft,
+                                        end: Alignment.topRight,
                                       ),
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(
-                                        color: const Color(0xFFCE93D8),
-                                        width: 1.2,
-                                      ),
+                                      borderRadius: BorderRadius.circular(50),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.08),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
-                                    child: const Text(
-                                      'Stop',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'Stop',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF37474F),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -445,33 +487,37 @@ class TimerScreen extends ConsumerWidget {
                                 timerNotifier.start();
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                                width: 220,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFDE4EC),
-                                  borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(
-                                    color: const Color(0xFFCE93D8),
-                                    width: 1.5,
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF1A2B88), Color(0xFF304FFE)],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
                                   ),
-                                ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.play_arrow_rounded,
-                                      color: Color(0xFFEF5350),
-                                      size: 28,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Start Focus',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.black,
-                                      ),
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(
+                                    color: const Color(0xFF0091EA),
+                                    width: 2.5,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
                                     ),
                                   ],
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'Start Focus',
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      letterSpacing: 0.8,
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
