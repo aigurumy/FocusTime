@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import '../providers/goal_provider.dart';
 
 class GoalScreen extends ConsumerWidget {
@@ -210,9 +211,10 @@ class GoalScreen extends ConsumerWidget {
   }
 
   void _showNewGoalDialog(BuildContext context, WidgetRef ref) {
+    final now = DateTime.now();
     final nameController = TextEditingController();
     final hoursController = TextEditingController(text: '10');
-    final daysController = TextEditingController(text: '30');
+    DateTime selectedDeadline = now;
 
     showDialog(
       context: context,
@@ -316,29 +318,55 @@ class GoalScreen extends ConsumerWidget {
                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF3B4045)),
                       ),
                       const SizedBox(height: 8),
-                      TextField(
-                        controller: daysController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: '30',
-                          hintStyle: const TextStyle(color: Color(0xFFB0B0B0)),
-                          suffixText: 'days',
-                          suffixStyle: const TextStyle(color: Color(0xFF8E959E)),
-                          filled: true,
-                          fillColor: const Color(0xFFF7F7F5),
-                          border: OutlineInputBorder(
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDeadline,
+                            firstDate: DateTime(now.year, now.month, now.day),
+                            lastDate: DateTime.now().add(const Duration(days: 3650)),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: Color(0xFF59A98C),
+                                    onPrimary: Colors.white,
+                                    onSurface: Color(0xFF3B4045),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setDialogState(() {
+                              selectedDeadline = picked;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF7F7F5),
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.withAlpha(60)),
+                            border: Border.all(color: Colors.grey.withAlpha(60)),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.withAlpha(60)),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, size: 18, color: Color(0xFF59A98C)),
+                              const SizedBox(width: 12),
+                              Text(
+                                DateFormat('MMM dd, yyyy').format(selectedDeadline),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xFF3B4045),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.arrow_drop_down, color: Color(0xFF8E959E)),
+                            ],
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF59A98C), width: 1.5),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
                       ),
                       const SizedBox(height: 28),
@@ -374,13 +402,12 @@ class GoalScreen extends ConsumerWidget {
                                 if (name.isEmpty) return;
 
                                 final targetHours = int.tryParse(hoursController.text.trim()) ?? 10;
-                                final deadlineDays = int.tryParse(daysController.text.trim()) ?? 30;
                                 final goal = Goal(
                                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                                   name: name,
                                   notes: '',
                                   targetHours: targetHours,
-                                  deadline: DateTime.now().add(Duration(days: deadlineDays)),
+                                  deadline: selectedDeadline,
                                 );
 
                                 ref.read(goalProvider.notifier).addGoal(goal);
@@ -420,7 +447,7 @@ class GoalScreen extends ConsumerWidget {
   void _showEditGoalDialog(BuildContext context, WidgetRef ref, Goal goal) {
     final nameController = TextEditingController(text: goal.name);
     final hoursController = TextEditingController(text: goal.targetHours.toString());
-    final daysController = TextEditingController(text: goal.daysLeft.toString());
+    DateTime selectedDeadline = goal.deadline;
 
     showDialog(
       context: context,
@@ -523,29 +550,55 @@ class GoalScreen extends ConsumerWidget {
                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF3B4045)),
                       ),
                       const SizedBox(height: 8),
-                      TextField(
-                        controller: daysController,
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: '30',
-                          hintStyle: const TextStyle(color: Color(0xFFB0B0B0)),
-                          suffixText: 'days',
-                          suffixStyle: const TextStyle(color: Color(0xFF8E959E)),
-                          filled: true,
-                          fillColor: const Color(0xFFF7F7F5),
-                          border: OutlineInputBorder(
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: selectedDeadline,
+                            firstDate: DateTime.now().isBefore(selectedDeadline) ? DateTime.now() : selectedDeadline,
+                            lastDate: DateTime.now().add(const Duration(days: 3650)),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: const ColorScheme.light(
+                                    primary: Color(0xFF2879D9),
+                                    onPrimary: Colors.white,
+                                    onSurface: Color(0xFF3B4045),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setDialogState(() {
+                              selectedDeadline = picked;
+                            });
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF7F7F5),
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.withAlpha(60)),
+                            border: Border.all(color: Colors.grey.withAlpha(60)),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.withAlpha(60)),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, size: 18, color: Color(0xFF2879D9)),
+                              const SizedBox(width: 12),
+                              Text(
+                                DateFormat('MMM dd, yyyy').format(selectedDeadline),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xFF3B4045),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              const Icon(Icons.arrow_drop_down, color: Color(0xFF8E959E)),
+                            ],
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF2879D9), width: 1.5),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
                       ),
                       const SizedBox(height: 28),
@@ -581,13 +634,12 @@ class GoalScreen extends ConsumerWidget {
                                 if (name.isEmpty) return;
 
                                 final targetHours = int.tryParse(hoursController.text.trim()) ?? goal.targetHours;
-                                final deadlineDays = int.tryParse(daysController.text.trim()) ?? goal.daysLeft;
                                 
                                 ref.read(goalProvider.notifier).updateGoal(
                                   goal.id,
                                   name: name,
                                   targetHours: targetHours,
-                                  deadline: DateTime.now().add(Duration(days: deadlineDays)),
+                                  deadline: selectedDeadline,
                                 );
                                 Navigator.pop(context);
                               },

@@ -97,7 +97,7 @@ class MainScreen extends ConsumerWidget {
           },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
-          selectedItemColor: currentIndex == 1 ? const Color(0xFF2879D9) : const Color(0xFFFF146E), // Blue for Goal, Deep pink for others
+          selectedItemColor: const Color(0xFFFF146E),
           unselectedItemColor: const Color(0xFFE91E63).withAlpha(150),
           showSelectedLabels: true,
           showUnselectedLabels: true,

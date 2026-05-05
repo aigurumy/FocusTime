@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/timer_provider.dart';
+import 'main_screen.dart';
 import '../widgets/progress_ring.dart';
 
 class BreakScreen extends ConsumerStatefulWidget {
@@ -134,87 +135,146 @@ class _BreakScreenState extends ConsumerState<BreakScreen> {
                     const Spacer(flex: 3),
                     
                     // Controls
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.mediumImpact();
-                              timerNotifier.setMode(TimerMode.focus);
-                              Navigator.of(context).pop();
-                            },
-                            child: Container(
-                              height: 60,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: const Color(0xFFB2DFDB),
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.05),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                    if (timerState.remainingSeconds > 0)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                HapticFeedback.mediumImpact();
+                                timerNotifier.setMode(TimerMode.focus);
+                                Navigator.of(context).pop();
+                              },
+                              child: Container(
+                                height: 56,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(28),
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFF4776E6), Color(0xFF8E54E9)], // Blue to Purple
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
                                   ),
-                                ],
-                              ),
-                              child: const Text(
-                                'Skip Break',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF00796B),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF4776E6).withOpacity(0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(26),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Text(
+                                    'Skip Break',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2D3436),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              HapticFeedback.mediumImpact();
-                              if (timerState.isRunning) {
-                                timerNotifier.pause();
-                              } else {
-                                timerNotifier.start();
-                              }
-                            },
-                            child: Container(
-                              height: 60,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(
-                                  colors: [Color(0xFF4DB6AC), Color(0xFF26A69A)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0xFF26A69A).withOpacity(0.3),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 6),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                HapticFeedback.mediumImpact();
+                                if (timerState.isRunning) {
+                                  timerNotifier.pause();
+                                } else {
+                                  timerNotifier.start();
+                                }
+                              },
+                              child: Container(
+                                height: 56,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(28),
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFDD2476), Color(0xFFFF512F)], // Pink to Orange
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
                                   ),
-                                ],
-                              ),
-                              child: Text(
-                                timerState.isRunning ? 'Pause' : 'Resume',
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFDD2476).withOpacity(0.2),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(26),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    timerState.isRunning ? 'Pause' : 'Resume',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2D3436),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+                        ],
+                      )
+                    else
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          timerNotifier.setMode(TimerMode.focus);
+                          ref.read(navigationIndexProvider.notifier).setIndex(2); // Focus tab
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          height: 56,
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(28),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF4776E6), Color(0xFF8E54E9)], // Blue to Purple
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF4776E6).withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(26),
+                            ),
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'To Focus Session',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF5E35B1), // Deep Purple
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
                     const SizedBox(height: 64),
                   ],
                 ),

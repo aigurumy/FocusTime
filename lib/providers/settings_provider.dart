@@ -6,8 +6,9 @@ class SettingsState {
   final String currentTask;
   final bool rainSoundEnabled;
   final bool deepWorkShieldEnabled;
-
   final bool isDevicePreviewEnabled;
+  final String focusTimeTone;
+  final String breakTimeTone;
 
   SettingsState({
     this.focusDuration = 45,
@@ -16,6 +17,8 @@ class SettingsState {
     this.rainSoundEnabled = true,
     this.deepWorkShieldEnabled = true,
     this.isDevicePreviewEnabled = true,
+    this.focusTimeTone = 'Victory 5',
+    this.breakTimeTone = 'Victory 2',
   });
 
   SettingsState copyWith({
@@ -25,6 +28,8 @@ class SettingsState {
     bool? rainSoundEnabled,
     bool? deepWorkShieldEnabled,
     bool? isDevicePreviewEnabled,
+    String? focusTimeTone,
+    String? breakTimeTone,
   }) {
     return SettingsState(
       focusDuration: focusDuration ?? this.focusDuration,
@@ -33,6 +38,8 @@ class SettingsState {
       rainSoundEnabled: rainSoundEnabled ?? this.rainSoundEnabled,
       deepWorkShieldEnabled: deepWorkShieldEnabled ?? this.deepWorkShieldEnabled,
       isDevicePreviewEnabled: isDevicePreviewEnabled ?? this.isDevicePreviewEnabled,
+      focusTimeTone: focusTimeTone ?? this.focusTimeTone,
+      breakTimeTone: breakTimeTone ?? this.breakTimeTone,
     );
   }
 }
@@ -65,6 +72,14 @@ class SettingsNotifier extends Notifier<SettingsState> {
 
   void toggleDevicePreview(bool enabled) {
     state = state.copyWith(isDevicePreviewEnabled: enabled);
+  }
+
+  void updateFocusTimeTone(String tone) {
+    state = state.copyWith(focusTimeTone: tone);
+  }
+
+  void updateBreakTimeTone(String tone) {
+    state = state.copyWith(breakTimeTone: tone);
   }
 }
 

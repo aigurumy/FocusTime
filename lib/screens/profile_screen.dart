@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'subscription_screen.dart';
 import '../providers/user_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -73,8 +75,8 @@ class ProfileScreen extends ConsumerWidget {
     if (path.startsWith('http') || path.startsWith('blob:') || path.startsWith('data:')) {
       return NetworkImage(path);
     }
-    // Fallback/Mobile path handling could go here if needed
-    return NetworkImage(path);
+    // Handle local file paths for mobile
+    return FileImage(File(path));
   }
 
   @override

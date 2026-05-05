@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart';
 import 'settings_provider.dart';
 
 enum TimerMode { focus, shortBreak, longBreak }
@@ -34,13 +36,18 @@ class TimerState {
   }
 }
 
+
 class TimerNotifier extends Notifier<TimerState> {
   Timer? _timer;
+  late AudioPlayer _audioPlayer;
 
   @override
   TimerState build() {
+    _audioPlayer = AudioPlayer();
+    
     ref.onDispose(() {
       _timer?.cancel();
+      _audioPlayer.dispose();
     });
 
     ref.listen<SettingsState>(settingsProvider, (previous, next) {
@@ -83,8 +90,29 @@ class TimerNotifier extends Notifier<TimerState> {
         WakelockPlus.disable();
         state = state.copyWith(isRunning: false);
         _showNotification();
+        _playSelectedTone();
       }
     });
+  }
+
+  Future<void> _playSelectedTone() async {
+    final settings = ref.read(settingsProvider);
+    String tone = 'None';
+    
+    if (state.mode == TimerMode.focus) {
+      tone = settings.focusTimeTone;
+    } else {
+      tone = settings.breakTimeTone;
+    }
+
+    if (tone == 'None') return;
+
+    try {
+      await _audioPlayer.stop();
+      await _audioPlayer.play(AssetSource('audio/$tone.mp3'));
+    } catch (e) {
+      debugPrint('Error playing completion sound: $e');
+    }
   }
 
   void startFromTask() {
@@ -166,3 +194,4 @@ final notificationsPluginProvider = Provider<FlutterLocalNotificationsPlugin>((r
 final timerProvider = NotifierProvider<TimerNotifier, TimerState>(() {
   return TimerNotifier();
 });
+

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/settings_provider.dart';
 import '../providers/timer_provider.dart';
 import 'main_screen.dart';
+import 'focus_time_tone_screen.dart';
+import 'break_time_tone_screen.dart';
 
 class SettingsScreenView extends ConsumerStatefulWidget {
   const SettingsScreenView({super.key});
@@ -168,63 +170,53 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
               ),
               const SizedBox(height: 16),
 
+              Row(
+                children: [
+                  const Icon(Icons.notifications_none, size: 28, color: Color(0xFF5E35B1)),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Notification Preferences',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFFE1F5FE), // Light blue background
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(5),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.grey.withAlpha(30)),
                 ),
-                padding: const EdgeInsets.all(16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Notification Preferences',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'A quiet moment to recharge.',
-                      style: TextStyle(fontSize: 13, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-
-                    _ToggleCard(
-                      icon: Icons.notifications_none,
-                      title: 'Background Rain Sound',
-                      subtitle: 'Play sound during focus mode',
-                      value: settings.rainSoundEnabled,
-                      onChanged: (val) {
-                        settingsNotifier.toggleRainSound(val);
+                    _ToneSelectionItem(
+                      title: 'Complete Focus Time Tone',
+                      value: settings.focusTimeTone,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FocusTimeToneScreen(),
+                          ),
+                        );
                       },
                     ),
-                    const SizedBox(height: 12),
-
-                    _ToggleCard(
-                      icon: Icons.remove_circle_outline,
-                      title: 'Deep Work Shield',
-                      subtitle: 'Auto-silence all system alerts\n(Requires PWA)',
-                      value: settings.deepWorkShieldEnabled,
-                      onChanged: (val) {
-                        settingsNotifier.toggleDeepWorkShield(val);
-                      },
+                    Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Colors.grey.withAlpha(50),
+                      indent: 16,
+                      endIndent: 16,
                     ),
-                    const SizedBox(height: 12),
-
-                    _ToggleCard(
-                      icon: Icons.phonelink_setup_rounded,
-                      title: 'Device Preview',
-                      subtitle: 'Toggle device frame for testing\n(Debug mode only)',
-                      value: settings.isDevicePreviewEnabled,
-                      onChanged: (val) {
-                        settingsNotifier.toggleDevicePreview(val);
+                    _ToneSelectionItem(
+                      title: 'Complete Break Time Tone',
+                      value: settings.breakTimeTone,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const BreakTimeToneScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -333,57 +325,55 @@ class _DurationCard extends StatelessWidget {
   }
 }
 
-class _ToggleCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool value;
-  final ValueChanged<bool> onChanged;
 
-  const _ToggleCard({
-    required this.icon,
+class _ToneSelectionItem extends StatelessWidget {
+  final String title;
+  final String value;
+  final VoidCallback onTap;
+
+  const _ToneSelectionItem({
     required this.title,
-    required this.subtitle,
     required this.value,
-    required this.onChanged,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE1F5FE), // Light blue
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: const Color(0xFF5E35B1)), // Purple icon
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            Row(
               children: [
                 Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.grey,
+                  ),
                 ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.chevron_right,
+                  color: Colors.grey,
+                  size: 20,
                 ),
               ],
             ),
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: const Color(0xFF5E35B1),
-            activeTrackColor: const Color(0xFFD1C4E9),
-            inactiveThumbColor: Colors.white,
-            inactiveTrackColor: Colors.grey.withAlpha(100),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
