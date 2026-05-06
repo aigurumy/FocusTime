@@ -139,7 +139,7 @@ class GoalScreen extends ConsumerWidget {
                 ),
                 const SizedBox(width: 10),
                 const Text(
-                  'Achieved Goals',
+                  'Archived Goals',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
@@ -170,7 +170,7 @@ class GoalScreen extends ConsumerWidget {
                     Icon(Icons.emoji_events_outlined, size: 40, color: textLight.withAlpha(180)),
                     const SizedBox(height: 12),
                     const Text(
-                      'No achieved goals yet.',
+                      'No archived goals yet.',
                       style: TextStyle(fontSize: 14, color: textLight),
                     ),
                   ],
@@ -833,7 +833,7 @@ class _GoalCard extends StatelessWidget {
                                 children: [
                                   Icon(Icons.check_circle_outline, size: 18, color: Color(0xFF59A98C)),
                                   SizedBox(width: 8),
-                                  Text('Mark Achieved'),
+                                  Text('Archive'),
                                 ],
                               ),
                             ),

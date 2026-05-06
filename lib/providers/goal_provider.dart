@@ -103,12 +103,22 @@ final goalProvider = NotifierProvider<GoalListNotifier, List<Goal>>(() {
   return GoalListNotifier();
 });
 
-/// Convenience provider: only active (not achieved) goals
+/// Convenience provider: only active (not achieved and not expired) goals
 final activeGoalsProvider = Provider<List<Goal>>((ref) {
-  return ref.watch(goalProvider).where((g) => !g.isAchieved).toList();
+  final now = DateTime.now();
+  return ref.watch(goalProvider).where((g) {
+    if (g.isAchieved) return false;
+    final endOfDeadlineDay = DateTime(g.deadline.year, g.deadline.month, g.deadline.day, 23, 59, 59);
+    return now.isBefore(endOfDeadlineDay);
+  }).toList();
 });
 
-/// Convenience provider: only achieved goals
+/// Convenience provider: achieved or expired goals (Archived)
 final achievedGoalsProvider = Provider<List<Goal>>((ref) {
-  return ref.watch(goalProvider).where((g) => g.isAchieved).toList();
+  final now = DateTime.now();
+  return ref.watch(goalProvider).where((g) {
+    if (g.isAchieved) return true;
+    final endOfDeadlineDay = DateTime(g.deadline.year, g.deadline.month, g.deadline.day, 23, 59, 59);
+    return now.isAfter(endOfDeadlineDay);
+  }).toList();
 });
