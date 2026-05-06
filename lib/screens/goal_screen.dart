@@ -8,9 +8,9 @@ class GoalScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const primaryBlue = Color(0xFF2879D9);
-    const textDark = Color(0xFF3B4045);
-    const textLight = Color(0xFF8E959E);
+    const primaryBlue = Color(0xFF070D24);
+    const textDark = Color(0xFF070D24);
+    const textLight = Color(0xFF5C6269);
     const cardBg = Color(0xFFF4F3EE);
     const cardBorder = Color(0xFFE6E4DC);
     const buttonTeal = Color(0xFF59A98C);
@@ -20,25 +20,24 @@ class GoalScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Goals',
-          style: TextStyle(
-            color: primaryBlue,
-            fontSize: 28,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Active Goals Header
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                child: Text(
+                  'Goals',
+                  style: TextStyle(
+                    color: primaryBlue,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Active Goals Header
             Row(
               children: [
                 const Icon(
@@ -198,6 +197,7 @@ class GoalScreen extends ConsumerWidget {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -241,7 +241,7 @@ class GoalScreen extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF3B4045),
+                              color: Color(0xFF070D24),
                             ),
                           ),
                         ],
@@ -329,9 +329,9 @@ class GoalScreen extends ConsumerWidget {
                               return Theme(
                                 data: Theme.of(context).copyWith(
                                   colorScheme: const ColorScheme.light(
-                                    primary: Color(0xFF59A98C),
+                                    primary: Color(0xFF070D24),
                                     onPrimary: Colors.white,
-                                    onSurface: Color(0xFF3B4045),
+                                    onSurface: Color(0xFF070D24),
                                   ),
                                 ),
                                 child: child!,
@@ -359,7 +359,7 @@ class GoalScreen extends ConsumerWidget {
                                 DateFormat('MMM dd, yyyy').format(selectedDeadline),
                                 style: const TextStyle(
                                   fontSize: 16,
-                                  color: Color(0xFF3B4045),
+                                  color: Color(0xFF070D24),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -474,7 +474,7 @@ class GoalScreen extends ConsumerWidget {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFF3B4045),
+                              color: Color(0xFF070D24),
                             ),
                           ),
                         ],
@@ -591,7 +591,7 @@ class GoalScreen extends ConsumerWidget {
                                 DateFormat('MMM dd, yyyy').format(selectedDeadline),
                                 style: const TextStyle(
                                   fontSize: 16,
-                                  color: Color(0xFF3B4045),
+                                  color: Color(0xFF070D24),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),

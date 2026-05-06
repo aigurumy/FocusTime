@@ -44,15 +44,14 @@ class _BreakScreenState extends ConsumerState<BreakScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
                   // Title
                   const Text(
                     'Break Time',
                     style: TextStyle(
-                      fontSize: 36,
+                      fontSize: 26,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF00A5C4), // Vibrant Teal/Cyan
-                      letterSpacing: -0.5,
+                      color: Color(0xFF070D24),
                     ),
                   ),
                   const SizedBox(height: 32),

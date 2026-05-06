@@ -54,7 +54,7 @@ class TimerScreen extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF2D72D9),
+                          color: Color(0xFF070D24),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -143,7 +143,7 @@ class TimerScreen extends ConsumerWidget {
                                       taskLabel,
                                       style: const TextStyle(
                                         fontSize: 16,
-                                        color: Color(0xFF455A64),
+                                        color: Color(0xFF070D24),
                                         fontWeight: FontWeight.w500,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -181,7 +181,7 @@ class TimerScreen extends ConsumerWidget {
                                 fontFamily: 'Courier',
                                 fontSize: timerFontSize,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.black,
+                                color: Color(0xFF070D24),
                                 letterSpacing: -2.0,
                               ),
                             ),
@@ -297,7 +297,7 @@ class TimerScreen extends ConsumerWidget {
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w500,
-                                                color: Color(0xFF37474F), // Dark slate grey
+                                                color: Color(0xFF070D24), // Dark slate grey
                                                 letterSpacing: 0.5,
                                               ),
                                             ),
@@ -350,7 +350,7 @@ class TimerScreen extends ConsumerWidget {
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w500,
-                                                color: Color(0xFF37474F),
+                                                color: Color(0xFF070D24),
                                               ),
                                             ),
                                           ),
@@ -383,7 +383,7 @@ class TimerScreen extends ConsumerWidget {
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w700,
-                                                color: Colors.black87,
+                                                color: Color(0xFF070D24),
                                               ),
                                             ),
                                             content: const Text(
@@ -391,7 +391,7 @@ class TimerScreen extends ConsumerWidget {
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
                                                 fontSize: 14,
-                                                color: Colors.black54,
+                                                color: Color(0x8A070D24),
                                               ),
                                             ),
                                             actions: [
@@ -416,7 +416,7 @@ class TimerScreen extends ConsumerWidget {
                                                           style: TextStyle(
                                                             fontSize: 16,
                                                             fontWeight: FontWeight.w600,
-                                                            color: Colors.black87,
+                                                            color: Color(0xFF070D24),
                                                           ),
                                                         ),
                                                       ),
@@ -493,7 +493,7 @@ class TimerScreen extends ConsumerWidget {
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w500,
-                                                color: Color(0xFF37474F),
+                                                color: Color(0xFF070D24),
                                               ),
                                             ),
                                           ),
@@ -570,7 +570,7 @@ class TimerScreen extends ConsumerWidget {
                               Expanded(
                                 child: Text(
                                   'No recent achievements yet.\nComplete a focus session to log one!',
-                                  style: TextStyle(fontSize: 14, color: Color(0xFF455A64)),
+                                  style: TextStyle(fontSize: 14, color: Color(0xFF070D24)),
                                 ),
                               ),
                             ],
@@ -613,7 +613,7 @@ class TimerScreen extends ConsumerWidget {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black,
+                                  color: Color(0xFF070D24),
                                 ),
                               ),
                               subtitle: Column(
@@ -624,7 +624,7 @@ class TimerScreen extends ConsumerWidget {
                                     achievements.first.topic,
                                     style: const TextStyle(
                                       fontSize: 14,
-                                      color: Colors.black87,
+                                      color: Color(0xFF070D24),
                                       fontWeight: FontWeight.w500,
                                     ),
                                     maxLines: 1,
@@ -664,7 +664,7 @@ class TimerScreen extends ConsumerWidget {
                                                   achievement.topic,
                                                   style: const TextStyle(
                                                     fontSize: 14,
-                                                    color: Colors.black87,
+                                                    color: Color(0xFF070D24),
                                                     fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
@@ -702,7 +702,7 @@ class TimerScreen extends ConsumerWidget {
                                           'Click for more',
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.black87,
+                                            color: Color(0xFF070D24),
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),

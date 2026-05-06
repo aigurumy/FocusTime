@@ -85,40 +85,41 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: Color(0xFF2879D9),
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: () => _showEditProfileDialog(context, ref, userProfile),
-            child: const Text(
-              'Edit',
-              style: TextStyle(
-                color: Color(0xFF3B4045),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Text(
+                      'Profile',
+                      style: TextStyle(
+                        color: Color(0xFF070D24),
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => _showEditProfileDialog(context, ref, userProfile),
+                        child: const Text(
+                          'Edit',
+                          style: TextStyle(
+                            color: Color(0xFF070D24),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
               // Profile Picture with Camera Icon
               Stack(
                 children: [
@@ -143,7 +144,7 @@ class ProfileScreen extends ConsumerWidget {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: const BoxDecoration(
-                          color: Color(0xFF4A68FF),
+                          color: Color(0xFF070D24),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -160,16 +161,16 @@ class ProfileScreen extends ConsumerWidget {
               Text(
                 userProfile.name,
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF3B4045),
+                  color: Color(0xFF070D24),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 userProfile.email,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   color: Color(0xFF78909C),
                 ),
               ),
@@ -184,7 +185,7 @@ class ProfileScreen extends ConsumerWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
-                    color: Color(0xFF455A64),
+                    color: Color(0xFF070D24),
                     height: 1.4,
                   ),
                 ),
@@ -214,7 +215,7 @@ class ProfileScreen extends ConsumerWidget {
                     const Text(
                       'Unlock Your Great Potential!',
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -243,14 +244,14 @@ class ProfileScreen extends ConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildPriceOption('Monthly', 'RM12.00 /month'),
+                        _buildPriceOption('Monthly', 'RM12.00 /m'),
                         Container(
                           height: 40,
                           width: 1,
                           color: Colors.white54,
                           margin: const EdgeInsets.symmetric(horizontal: 20),
                         ),
-                        _buildPriceOption('Annual', 'RM9.90 /month'),
+                        _buildPriceOption('Annual', 'RM9.90 /m'),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -262,7 +263,7 @@ class ProfileScreen extends ConsumerWidget {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFF5F5F5),
-                        foregroundColor: const Color(0xFF455A64),
+                        foregroundColor: const Color(0xFF070D24),
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                         shape: RoundedRectangleBorder(
@@ -284,6 +285,7 @@ class ProfileScreen extends ConsumerWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -12,6 +12,7 @@ class InsightScreen extends ConsumerStatefulWidget {
 
 class _InsightScreenState extends ConsumerState<InsightScreen> {
   final ScrollController _scrollController = ScrollController();
+  String _selectedPeriod = 'Week';
 
   @override
   void dispose() {
@@ -50,9 +51,9 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
       }
     });
 
-    const primaryBlue = Color(0xFF2879D9);
-    const textDark = Color(0xFF3B4045);
-    const textLight = Color(0xFF8E959E);
+    const primaryBlue = Color(0xFF070D24);
+    const textDark = Color(0xFF070D24);
+    const textLight = Color(0xFF5C6269);
     const teal = Color(0xFF26A69A);
     const cardBg = Color(0xFFF4F3EE);
     const cardBorder = Color(0xFFE6E4DC);
@@ -68,17 +69,18 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
     final totalHours = totalMinutes / 60.0;
     final sessionsCount = thisWeek.length;
 
-    // Build daily data for the chart (last 7 days)
-    final List<_DayData> chartData = List.generate(7, (i) {
-      final day = now.subtract(Duration(days: 6 - i));
+    // Build daily data for the chart based on selected period
+    final int daysCount = _selectedPeriod == 'Day' ? 1 : (_selectedPeriod == 'Week' ? 7 : 30);
+    final List<_DayData> chartData = List.generate(daysCount, (i) {
+      final day = now.subtract(Duration(days: (daysCount - 1) - i));
       final dayAchievements = achievements.where((a) =>
           a.timestamp.year == day.year &&
           a.timestamp.month == day.month &&
           a.timestamp.day == day.day);
       final mins = dayAchievements.fold<int>(0, (sum, a) => sum + a.durationMinutes);
       return _DayData(
-        dayLabel: _weekdayShort(day.weekday),
-        dateLabel: '${day.day}',
+        dayLabel: daysCount <= 7 ? _weekdayShort(day.weekday) : (i % 5 == 0 ? '${day.day}' : ''),
+        dateLabel: daysCount <= 7 ? '${day.day}' : '',
         minutes: mins,
       );
     });
@@ -97,7 +99,7 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
                 child: Text(
                   'Insights',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.w800,
                     color: primaryBlue,
                   ),
@@ -128,8 +130,51 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
               const SizedBox(height: 20),
 
               // Daily Focus Trend Chart
-              _FocusChart(data: chartData),
+              _FocusChart(data: chartData, selectedPeriod: _selectedPeriod),
               const SizedBox(height: 16),
+
+              // Period Selection Tabs
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF3FAFC),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: ['Day', 'Week', 'Month'].map((period) {
+                      final isSelected = _selectedPeriod == period;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedPeriod = period;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.white : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: isSelected 
+                              ? [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 4, offset: const Offset(0, 2))]
+                              : null,
+                          ),
+                          child: Text(
+                            period,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected ? const Color(0xFF070D24) : const Color(0xFF5C6269),
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
 
               // Total Focus Time Card
               Container(
@@ -334,7 +379,8 @@ class _DayData {
 // ─── Daily Focus Trend Chart (custom painted) ─────────────────
 class _FocusChart extends StatelessWidget {
   final List<_DayData> data;
-  const _FocusChart({required this.data});
+  final String selectedPeriod;
+  const _FocusChart({required this.data, required this.selectedPeriod});
 
   @override
   Widget build(BuildContext context) {
@@ -342,7 +388,7 @@ class _FocusChart extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2C3E50),
+        color: const Color(0xFFF3FAFC),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -353,15 +399,15 @@ class _FocusChart extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: Color(0xFF070D24),
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            'Minutes focused over the last 7 days',
+            selectedPeriod == 'Day' ? 'Minutes focused today' : (selectedPeriod == 'Month' ? 'Minutes focused over the last 30 days' : 'Minutes focused over the last 7 days'),
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withAlpha(150),
+              color: Color(0x99070D24),
             ),
           ),
           const SizedBox(height: 20),
@@ -382,19 +428,19 @@ class _FocusChart extends StatelessWidget {
                 children: [
                   Text(
                     d.dayLabel,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withAlpha(180),
+                      color: Color(0xCC070D24),
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     d.dateLabel,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white.withAlpha(130),
+                      color: Color(0x80070D24),
                     ),
                   ),
                 ],
@@ -429,7 +475,7 @@ class _ChartPainter extends CustomPainter {
 
     // Grid lines
     final gridPaint = Paint()
-      ..color = Colors.white.withAlpha(20)
+      ..color = const Color(0xFF070D24).withAlpha(15)
       ..strokeWidth = 0.5;
     for (int i = 0; i < 4; i++) {
       final y = size.height * i / 3;
@@ -480,7 +526,7 @@ class _ChartPainter extends CustomPainter {
     // Dots
     final dotPaint = Paint()..color = const Color(0xFF26A69A);
     final dotBorder = Paint()
-      ..color = Colors.white
+      ..color = const Color(0xFFF3FAFC)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 

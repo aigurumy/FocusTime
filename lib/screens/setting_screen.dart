@@ -37,7 +37,7 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
       color: Colors.white,
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,9 +45,9 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
                 child: Text(
                   'Setting',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 26,
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF2D72D9),
+                    color: Color(0xFF070D24),
                   ),
                 ),
               ),
@@ -64,7 +64,7 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
                       children: [
                         Text(
                           'What are we working on?',
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           'Capture your intent. Let the focus follow.',
@@ -144,7 +144,7 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
                   const SizedBox(width: 12),
                   const Text(
                     'Notification Preferences',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -224,9 +224,9 @@ class _ToneSelectionItem extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                fontSize: 15,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: const Color(0xFF070D24),
               ),
             ),
             Row(
@@ -234,7 +234,7 @@ class _ToneSelectionItem extends StatelessWidget {
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 12,
                     color: Colors.grey,
                   ),
                 ),

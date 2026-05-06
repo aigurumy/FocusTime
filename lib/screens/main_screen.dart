@@ -118,8 +118,8 @@ class MainScreen extends ConsumerWidget {
           },
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
-          selectedItemColor: const Color(0xFFFF146E),
-          unselectedItemColor: const Color(0xFFE91E63).withAlpha(150),
+          selectedItemColor: const Color(0xFFF32E77),
+          unselectedItemColor: const Color(0xFFFA74C2),
           showSelectedLabels: true,
           showUnselectedLabels: true,
           selectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold, fontSize: 12),
@@ -140,8 +140,8 @@ class MainScreen extends ConsumerWidget {
                 children: [
                   Icon(
                     Icons.schedule, 
-                    size: 32, // Increased from 26
-                    color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
+                    size: 34, // Increased from 32
+                    color: currentIndex == 2 ? const Color(0xFFF32E77) : const Color(0xFFFA74C2),
                   ),
                   Positioned(
                     right: -2,
@@ -153,8 +153,8 @@ class MainScreen extends ConsumerWidget {
                       ),
                       child: Icon(
                         Icons.play_arrow_rounded, 
-                        size: 18, // Increased from 14
-                        color: currentIndex == 2 ? const Color(0xFFFF146E) : const Color(0xFFE91E63).withAlpha(150),
+                        size: 19, // Increased from 18
+                        color: currentIndex == 2 ? const Color(0xFFF32E77) : const Color(0xFFFA74C2),
                       ),
                     ),
                   ),

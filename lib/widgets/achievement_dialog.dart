@@ -75,7 +75,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF455A64),
+                  color: Color(0xFF070D24),
                   height: 1.2,
                 ),
               ),
@@ -98,7 +98,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                     'Topic: ${widget.topic}',
                     style: const TextStyle(
                       fontSize: 14,
-                      color: Color(0xFF607D8B),
+                      color: Color(0x99070D24),
                     ),
                   ),
                 ),
@@ -114,7 +114,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                   maxLines: 5,
                   style: const TextStyle(
                     fontSize: 15,
-                    color: Color(0xFF455A64),
+                    color: Color(0xFF070D24),
                   ),
                   decoration: const InputDecoration(
                     hintText: 'Finish design UI/UX',
@@ -156,7 +156,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                   Navigator.of(context).pop();
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF78909C),
+                  foregroundColor: const Color(0x99070D24),
                 ),
                 child: const Text(
                   'Skip for now',

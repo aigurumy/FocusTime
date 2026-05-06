@@ -64,10 +64,13 @@ class FocusTimeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).apply(
+          bodyColor: const Color(0xFF070D24),
+          displayColor: const Color(0xFF070D24),
+        ),
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFFF146E),
-          background: Colors.white,
+          surface: Colors.white,
         ),
         useMaterial3: true,
       ),

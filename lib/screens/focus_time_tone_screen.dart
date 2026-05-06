@@ -78,7 +78,7 @@ class _FocusTimeToneScreenState extends ConsumerState<FocusTimeToneScreen> {
                   const Text(
                     'Complete Focus Time Tone',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: Colors.black,
                       letterSpacing: -0.5,
@@ -136,7 +136,7 @@ class _FocusTimeToneScreenState extends ConsumerState<FocusTimeToneScreen> {
                               Text(
                                 tone,
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 12,
                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                                   color: isSelected ? const Color(0xFF5E35B1) : Colors.black87,
                                 ),

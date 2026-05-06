@@ -31,7 +31,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               const Text(
                 'Subcription Plan',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF2879D9),
                 ),
@@ -41,7 +41,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 'Let FOCUS\nto Achieve\nmy Goals',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 36,
+                  fontSize: 30,
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w300,
                   color: Color(0xFFF06292),
@@ -69,15 +69,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: _selectedOption == 0 ? const Color(0xFFFCE4EC) : const Color(0xFFFDF0F5),
+                    color: _selectedOption == 0 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: _selectedOption == 0 ? const Color(0xFFF06292) : Colors.grey.shade300,
+                      color: _selectedOption == 0 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
                       width: 1.5,
                     ),
                     boxShadow: _selectedOption == 0 ? [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: const Color(0xFFEF39A3).withOpacity(0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 6),
                       )
@@ -89,20 +89,20 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Monthly [RM15.00]',
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF37474F),
+                                color: _selectedOption == 0 ? Colors.white : Colors.black,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               'RM3.75 / week',
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                                color: _selectedOption == 0 ? Colors.white70 : Colors.black87,
                               ),
                             ),
                           ],
@@ -121,76 +121,69 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: _selectedOption == 1 ? const Color(0xFFF06292) : const Color(0xFFFDF0F5),
+                    color: _selectedOption == 1 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: const Color(0xFFF06292),
+                      color: _selectedOption == 1 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
                       width: 1.5,
                     ),
-                    boxShadow: [
+                    boxShadow: _selectedOption == 1 ? [
                       BoxShadow(
-                        color: const Color(0xFFF06292).withOpacity(0.3),
+                        color: const Color(0xFFEF39A3).withOpacity(0.3),
                         blurRadius: 15,
                         offset: const Offset(0, 8),
                       )
-                    ],
+                    ] : null,
                   ),
-                  child: Stack(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Annually [RM118.80]',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text(
-                            'RM2.47 / week',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: const [
-                              Icon(Icons.whatshot, color: Colors.orange, size: 20),
-                              SizedBox(width: 6),
-                              Text(
-                                'Popular Choice',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      Text(
+                        'Annually [RM118.80]',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: _selectedOption == 1 ? Colors.white : Colors.black,
+                        ),
                       ),
-                      Positioned(
-                        right: 0,
-                        top: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'Save RM61.10',
+                      const SizedBox(height: 4),
+                      Text(
+                        'RM2.47 / week',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: _selectedOption == 1 ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.whatshot, color: Colors.orange, size: 20),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Popular Choice',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFF06292),
+                              color: _selectedOption == 1 ? Colors.white : Colors.black,
                             ),
                           ),
-                        ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'Save RM61.10',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFF06292),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
