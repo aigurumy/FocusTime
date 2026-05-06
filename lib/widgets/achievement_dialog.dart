@@ -70,7 +70,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                'Focus\nComplete!',
+                'Focus Complete!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
@@ -98,6 +98,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                     'Topic: ${widget.topic}',
                     style: const TextStyle(
                       fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: Color(0x99070D24),
                     ),
                   ),
@@ -111,7 +112,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                 ),
                 child: TextField(
                   controller: _logController,
-                  maxLines: 5,
+                  maxLines: 2,
                   style: const TextStyle(
                     fontSize: 15,
                     color: Color(0xFF070D24),
@@ -143,7 +144,7 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
                     'Log Achievement',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),

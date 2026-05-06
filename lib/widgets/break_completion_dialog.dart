@@ -26,7 +26,7 @@ class _BreakCompletionDialogState extends ConsumerState<BreakCompletionDialog> {
       elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 45),
       child: Container(
-        padding: const EdgeInsets.fromLTRB(30, 40, 30, 40),
+        padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(40),
