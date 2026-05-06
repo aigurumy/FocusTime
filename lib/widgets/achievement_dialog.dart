@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/achievement_provider.dart';
-import '../screens/break_screen.dart';
+import '../providers/timer_provider.dart';
+import '../screens/main_screen.dart';
 
 class AchievementDialog extends ConsumerStatefulWidget {
   final String topic;
@@ -21,6 +22,15 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
   final TextEditingController _logController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Play the focus completion tone when the dialog appears
+    Future.microtask(() {
+      ref.read(timerProvider.notifier).playSelectedTone(TimerMode.focus);
+    });
+  }
+
+  @override
   void dispose() {
     _logController.dispose();
     super.dispose();
@@ -38,11 +48,10 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
       ref.read(achievementProvider.notifier).addAchievement(achievement);
     }
     
-    // Close dialog and push Break screen
+    // Close dialog and switch to Break screen via state
+    ref.read(timerProvider.notifier).setMode(TimerMode.shortBreak);
+    ref.read(navigationIndexProvider.notifier).setIndex(2);
     Navigator.of(context).pop();
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const BreakScreen()),
-    );
   }
 
   @override
@@ -142,10 +151,9 @@ class _AchievementDialogState extends ConsumerState<AchievementDialog> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
+                  ref.read(timerProvider.notifier).setMode(TimerMode.shortBreak);
+                  ref.read(navigationIndexProvider.notifier).setIndex(2);
                   Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const BreakScreen()),
-                  );
                 },
                 style: TextButton.styleFrom(
                   foregroundColor: const Color(0xFF78909C),

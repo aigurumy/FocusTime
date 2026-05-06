@@ -140,38 +140,6 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
 
               Row(
                 children: [
-                  const Icon(Icons.tune, size: 28),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'App Settings',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              _DurationCard(
-                title: 'Focus Duration',
-                subtitle: 'The length of your deep work session.',
-                value: settings.focusDuration,
-                onChanged: (val) {
-                  settingsNotifier.updateFocusDuration(val.toInt());
-                },
-              ),
-              const SizedBox(height: 16),
-
-              _DurationCard(
-                title: 'Break Duration',
-                subtitle: 'A quiet moment to recharge.',
-                value: settings.breakDuration,
-                onChanged: (val) {
-                  settingsNotifier.updateBreakDuration(val.toInt());
-                },
-              ),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
                   const Icon(Icons.notifications_none, size: 28, color: Color(0xFF5E35B1)),
                   const SizedBox(width: 12),
                   const Text(
@@ -226,100 +194,6 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _DurationCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int value;
-  final ValueChanged<double> onChanged;
-
-  const _DurationCard({
-    required this.title,
-    required this.subtitle,
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: Colors.grey.withAlpha(30)),
-      ),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE0F7FA), // Light cyan
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${value}m',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF006064), // Dark cyan
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              activeTrackColor: const Color(0xFFB39DDB), // Light purple
-              inactiveTrackColor: const Color(0xFFEDE7F6),
-              thumbColor: const Color(0xFF9575CD),
-              overlayColor: const Color(0xFF9575CD).withAlpha(50),
-              trackHeight: 4.0,
-            ),
-            child: Slider(
-              value: value.toDouble(),
-              min: 1,
-              max: 60,
-              onChanged: onChanged,
-            ),
-          ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('1m', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
-              Text('60m', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
-            ],
-          ),
-        ],
       ),
     );
   }

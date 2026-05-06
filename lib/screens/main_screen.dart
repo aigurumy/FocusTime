@@ -9,6 +9,9 @@ import '../providers/timer_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/goal_provider.dart';
 import '../widgets/achievement_dialog.dart';
+import '../widgets/break_completion_dialog.dart';
+import 'break_screen.dart';
+
 
 class NavigationState {
   final int index;
@@ -63,15 +66,33 @@ class MainScreen extends ConsumerWidget {
           ),
         );
       }
+
+      // Show Break Completion Dialog
+      if (previous?.remainingSeconds != 0 && 
+          next.remainingSeconds == 0 && 
+          (next.mode == TimerMode.shortBreak || next.mode == TimerMode.longBreak) && 
+          next.initialSeconds > 0) {
+
+        // Reset to Focus mode and ensure we're on the Focus tab
+        ref.read(timerProvider.notifier).setMode(TimerMode.focus);
+        ref.read(navigationIndexProvider.notifier).setIndex(2);
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const BreakCompletionDialog(),
+        );
+      }
     });
 
     final navState = ref.watch(navigationIndexProvider);
     final currentIndex = navState.index;
+    final timerState = ref.watch(timerProvider);
 
     final List<Widget> screens = [
       const InsightScreen(),
       const GoalScreen(),
-      const TimerScreen(), // Focus page
+      (timerState.mode == TimerMode.shortBreak || timerState.mode == TimerMode.longBreak) ? const BreakScreen() : const TimerScreen(), // Focus page
       const SettingsScreenView(), // Setting page
       const ProfileScreen(),
     ];

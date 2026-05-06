@@ -88,18 +88,18 @@ class TimerNotifier extends Notifier<TimerState> {
       } else {
         _timer?.cancel();
         WakelockPlus.disable();
-        state = state.copyWith(isRunning: false);
         _showNotification();
-        _playSelectedTone();
+        state = state.copyWith(isRunning: false);
       }
     });
   }
 
-  Future<void> _playSelectedTone() async {
+  Future<void> playSelectedTone([TimerMode? forcedMode]) async {
     final settings = ref.read(settingsProvider);
     String tone = 'None';
     
-    if (state.mode == TimerMode.focus) {
+    final currentMode = forcedMode ?? state.mode;
+    if (currentMode == TimerMode.focus) {
       tone = settings.focusTimeTone;
     } else {
       tone = settings.breakTimeTone;
@@ -137,6 +137,13 @@ class TimerNotifier extends Notifier<TimerState> {
     state = state.copyWith(remainingSeconds: state.initialSeconds);
   }
 
+  void skip() {
+    _timer?.cancel();
+    WakelockPlus.disable();
+    _showNotification();
+    state = state.copyWith(remainingSeconds: 0, isRunning: false);
+  }
+
   void setMode(TimerMode mode) {
     pause();
     final settings = ref.read(settingsProvider);
@@ -154,7 +161,7 @@ class TimerNotifier extends Notifier<TimerState> {
     );
   }
 
-  Future<void> _showNotification() async {
+  Future<void> _showNotification([TimerMode? forcedMode]) async {
     final settings = ref.read(settingsProvider);
     final plugin = ref.read(notificationsPluginProvider);
     
@@ -170,7 +177,8 @@ class TimerNotifier extends Notifier<TimerState> {
     
     String title = "Session Complete";
     String body = "Time's up!";
-    if (state.mode == TimerMode.focus) {
+    final currentMode = forcedMode ?? state.mode;
+    if (currentMode == TimerMode.focus) {
       title = "Focus Session Complete!";
       body = "Great job on '${settings.currentTask}'! Time for a break.";
     } else {

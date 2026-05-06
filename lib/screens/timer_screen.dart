@@ -190,146 +190,169 @@ class TimerScreen extends ConsumerWidget {
                       ),
 
                       // Time Scroller / Spacer
-                      if (!timerState.isRunning && timerState.mode == TimerMode.focus && timerState.remainingSeconds == timerState.initialSeconds) ...[
-                        const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      if (timerState.mode == TimerMode.focus)
+                        Visibility(
+                          visible: !timerState.isRunning && timerState.remainingSeconds == timerState.initialSeconds,
+                          maintainSize: true,
+                          maintainAnimation: true,
+                          maintainState: true,
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              SliderTheme(
-                                data: SliderThemeData(
-                                  activeTrackColor: const Color(0xFFEF5350),
-                                  inactiveTrackColor: const Color(0xFFEF5350).withOpacity(0.2),
-                                  thumbColor: const Color(0xFFEF5350),
-                                  trackHeight: 6.0,
-                                  overlayColor: const Color(0xFFEF5350).withOpacity(0.15),
-                                  thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12, elevation: 4),
-                                  tickMarkShape: const RoundSliderTickMarkShape(tickMarkRadius: 3),
-                                  activeTickMarkColor: Colors.white.withOpacity(0.6),
-                                  inactiveTickMarkColor: const Color(0xFFEF5350).withOpacity(0.4),
-                                ),
-                                child: Slider(
-                                  value: settings.focusDuration.toDouble(),
-                                  min: 1.0,
-                                  max: 60.0,
-                                  divisions: 59,
-                                  onChanged: (val) {
-                                    HapticFeedback.selectionClick();
-                                    ref.read(settingsProvider.notifier).updateFocusDuration(val.toInt());
-                                  },
-                                ),
-                              ),
+                              const SizedBox(height: 20),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                                child: Stack(
-                                  alignment: Alignment.center,
+                                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Column(
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: const [
-                                        Text('1m', style: TextStyle(color: Color(0xFFEF5350), fontWeight: FontWeight.w800, fontSize: 16)),
-                                        Text('60m', style: TextStyle(color: Color(0xFFEF5350), fontWeight: FontWeight.w800, fontSize: 16)),
-                                      ],
+                                    SliderTheme(
+                                      data: SliderThemeData(
+                                        activeTrackColor: const Color(0xFFEF5350),
+                                        inactiveTrackColor: const Color(0xFFEF5350).withOpacity(0.2),
+                                        thumbColor: const Color(0xFFEF5350),
+                                        trackHeight: 6.0,
+                                        overlayColor: const Color(0xFFEF5350).withOpacity(0.15),
+                                        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12, elevation: 4),
+                                        tickMarkShape: const RoundSliderTickMarkShape(tickMarkRadius: 3),
+                                        activeTickMarkColor: Colors.white.withOpacity(0.6),
+                                        inactiveTickMarkColor: const Color(0xFFEF5350).withOpacity(0.4),
+                                      ),
+                                      child: Slider(
+                                        value: settings.focusDuration.toDouble(),
+                                        min: 1.0,
+                                        max: 60.0,
+                                        divisions: 59,
+                                        onChanged: (val) {
+                                          HapticFeedback.selectionClick();
+                                          ref.read(settingsProvider.notifier).updateFocusDuration(val.toInt());
+                                        },
+                                      ),
                                     ),
-                                    const Text('|', style: TextStyle(color: Color(0xFFEF5350), fontWeight: FontWeight.w800, fontSize: 16)),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: const [
+                                              Text('1m', style: TextStyle(color: Color(0xFFEF5350), fontWeight: FontWeight.w800, fontSize: 16)),
+                                              Text('60m', style: TextStyle(color: Color(0xFFEF5350), fontWeight: FontWeight.w800, fontSize: 16)),
+                                            ],
+                                          ),
+                                          const Text('|', style: TextStyle(color: Color(0xFFEF5350), fontWeight: FontWeight.w800, fontSize: 16)),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
+                              const SizedBox(height: 20),
                             ],
                           ),
-                        ),
+                        )
+                      else
                         const SizedBox(height: 20),
-                      ] else ...[
-                        const SizedBox(height: 20),
-                      ],
 
                       // Timer Controls
                       Builder(
                         builder: (context) {
                           if (timerState.isRunning) {
-                            return GestureDetector(
-                              onTap: () {
-                                HapticFeedback.lightImpact();
-                                timerNotifier.pause();
-                              },
-                              child: Container(
-                                width: 140,
-                                padding: const EdgeInsets.all(2.5), // The gradient border width
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [Color(0xFF6A1B9A), Color(0xFFCE93D8)],
-                                    begin: Alignment.bottomLeft,
-                                    end: Alignment.topRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(50),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.08),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'Pause',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF37474F), // Dark slate grey
-                                        letterSpacing: 0.5,
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 137),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        timerNotifier.pause();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2.5), // The gradient border width
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [Color(0xFF6A1B9A), Color(0xFFCE93D8)],
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                          ),
+                                          borderRadius: BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.08),
+                                              blurRadius: 12,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(50),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'Pause',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF37474F), // Dark slate grey
+                                                letterSpacing: 0.5,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                              ],
                             );
                           } else if (timerState.remainingSeconds < timerState.initialSeconds && timerState.remainingSeconds > 0) {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    timerNotifier.start();
-                                  },
-                                  child: Container(
-                                    width: 140,
-                                    padding: const EdgeInsets.all(2.5),
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [Color(0xFF2196F3), Color(0xFF6A1B9A)],
-                                        begin: Alignment.bottomLeft,
-                                        end: Alignment.topRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(50),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
+                                Flexible(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 137),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        timerNotifier.start();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2.5),
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [Color(0xFF2196F3), Color(0xFF6A1B9A)],
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                          ),
+                                          borderRadius: BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.08),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          'Continue',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: Color(0xFF37474F),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(50),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'Continue',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF37474F),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -337,138 +360,142 @@ class TimerScreen extends ConsumerWidget {
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                GestureDetector(
-                                  onTap: () {
-                                    HapticFeedback.lightImpact();
-                                    showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      builder: (ctx) => AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        backgroundColor: Colors.white,
-                                        titlePadding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
-                                        contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-                                        actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
-                                        title: const Text(
-                                          'Stop Focus Time?',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
-                                        content: const Text(
-                                          'Your current session progress will be lost.',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                        actions: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: GestureDetector(
-                                                  onTap: () => Navigator.of(ctx).pop(),
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius: BorderRadius.circular(14),
-                                                      border: Border.all(
-                                                        color: const Color(0xFFCE93D8),
-                                                        width: 1.2,
-                                                      ),
-                                                    ),
-                                                    child: const Text(
-                                                      'Cancel',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Colors.black87,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
+                                Flexible(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 137),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        HapticFeedback.lightImpact();
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          builder: (ctx) => AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            backgroundColor: Colors.white,
+                                            titlePadding: const EdgeInsets.fromLTRB(24, 28, 24, 8),
+                                            contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                                            actionsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+                                            title: const Text(
+                                              'Stop Focus Time?',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700,
+                                                color: Colors.black87,
                                               ),
-                                              const SizedBox(width: 12),
-                                              Expanded(
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.of(ctx).pop();
-                                                    timerNotifier.reset();
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      gradient: const LinearGradient(
-                                                        colors: [Color(0xFFFF6B6B), Color(0xFFEF5350)],
-                                                        begin: Alignment.topLeft,
-                                                        end: Alignment.bottomRight,
-                                                      ),
-                                                      borderRadius: BorderRadius.circular(14),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: const Color(0xFFEF5350).withOpacity(0.3),
-                                                          blurRadius: 8,
-                                                          offset: const Offset(0, 3),
+                                            ),
+                                            content: const Text(
+                                              'Your current session progress will be lost.',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                            actions: [
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () => Navigator.of(ctx).pop(),
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius: BorderRadius.circular(14),
+                                                          border: Border.all(
+                                                            color: const Color(0xFFCE93D8),
+                                                            width: 1.2,
+                                                          ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                    child: const Text(
-                                                      'Stop',
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: Colors.white,
+                                                        child: const Text(
+                                                          'Cancel',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: Colors.black87,
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
+                                                  const SizedBox(width: 12),
+                                                  Expanded(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.of(ctx).pop();
+                                                        timerNotifier.reset();
+                                                      },
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(vertical: 12),
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          gradient: const LinearGradient(
+                                                            colors: [Color(0xFFFF6B6B), Color(0xFFEF5350)],
+                                                            begin: Alignment.topLeft,
+                                                            end: Alignment.bottomRight,
+                                                          ),
+                                                          borderRadius: BorderRadius.circular(14),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: const Color(0xFFEF5350).withOpacity(0.3),
+                                                              blurRadius: 8,
+                                                              offset: const Offset(0, 3),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: const Text(
+                                                          'Stop',
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    width: 140,
-                                    padding: const EdgeInsets.all(2.5),
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [Color(0xFFE91E63), Color(0xFFFF80AB)],
-                                        begin: Alignment.bottomLeft,
-                                        end: Alignment.topRight,
-                                      ),
-                                      borderRadius: BorderRadius.circular(50),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2.5),
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [Color(0xFFE91E63), Color(0xFFFF80AB)],
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                          ),
+                                          borderRadius: BorderRadius.circular(50),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.08),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                          'Stop',
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: Color(0xFF37474F),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(50),
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              'Stop',
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF37474F),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -525,7 +552,7 @@ class TimerScreen extends ConsumerWidget {
                         },
                       ),
 
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 28),
 
                       // Achievement Card
                       if (achievements.isEmpty)
