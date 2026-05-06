@@ -65,7 +65,7 @@ class _BreakCompletionDialogState extends ConsumerState<BreakCompletionDialog> {
               '"In this age of infinite information\ndistraction is ultimate enemy\nSuccess belongs to those\nwho master the art of FOCUS."',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
                 fontStyle: FontStyle.italic,
                 color: Colors.black,

@@ -122,8 +122,8 @@ class MainScreen extends ConsumerWidget {
           unselectedItemColor: const Color(0xFFE91E63).withAlpha(150),
           showSelectedLabels: true,
           showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+          selectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.bold, fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.normal, fontSize: 12),
           elevation: 0,
           items: [
             const BottomNavigationBarItem(
