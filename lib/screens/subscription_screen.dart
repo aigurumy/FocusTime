@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
@@ -8,219 +9,228 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int _selectedOption = 1; // 0 for Monthly, 1 for Annual (Popular)
+  int _selectedOption = 1; // 0 for Monthly, 1 for Annual
 
   @override
   Widget build(BuildContext context) {
+    Color annualColor = _selectedOption == 1 ? const Color(0xFFE31B8F) : Colors.black;
+    Color monthlyColor = _selectedOption == 0 ? const Color(0xFFE31B8F) : Colors.black;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        centerTitle: true,
+        title: Text(
+          'Subscription Plan',
+          style: GoogleFonts.inter(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF1565C0),
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF37474F)),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Subcription Plan',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2879D9),
-                ),
+        child: Column(
+          children: [
+            // Top Illustration Section
+            SizedBox(
+              width: double.infinity,
+              child: Image.asset(
+                'assets/images/subscription_header.png',
+                width: double.infinity,
+                fit: BoxFit.fitWidth,
               ),
-              const SizedBox(height: 32),
-              const Text(
-                'Let FOCUS\nto Achieve\nmy Goals',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 30,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w300,
-                  color: Color(0xFFF06292),
-                  height: 1.1,
-                  fontFamily: 'Serif',
-                ),
-              ),
-              const SizedBox(height: 60),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Select subscription',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF37474F),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              
-              // Monthly Option
-              GestureDetector(
-                onTap: () => setState(() => _selectedOption = 0),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: _selectedOption == 0 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _selectedOption == 0 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
-                      width: 1.5,
+            ),
+            
+            // Content Section
+            Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  Text(
+                    'Achieve your goals today',
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black,
                     ),
-                    boxShadow: _selectedOption == 0 ? [
-                      BoxShadow(
-                        color: const Color(0xFFEF39A3).withOpacity(0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 6),
-                      )
-                    ] : null,
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Monthly [RM15.00]',
-                              style: TextStyle(
-                                fontSize: 18,
+                  const SizedBox(height: 8),
+                  Text(
+                    'Subscribe to Unlock Your Full Potential',
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  // Annual Card
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedOption = 1),
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: annualColor, width: 1.5),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _selectedOption == 1 ? Icons.radio_button_checked : Icons.radio_button_off,
+                                color: annualColor,
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                'Annual',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: annualColor,
+                                ),
+                              ),
+                              const Spacer(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'RM 118.90',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: annualColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    '( RM 9.90/month )',
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: annualColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE31B8F),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              'Best Value',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                color: _selectedOption == 0 ? Colors.white : Colors.black,
                               ),
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'RM3.75 / week',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: _selectedOption == 0 ? Colors.white70 : Colors.black87,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Annual Option
-              GestureDetector(
-                onTap: () => setState(() => _selectedOption = 1),
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: _selectedOption == 1 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: _selectedOption == 1 ? const Color(0xFFEF39A3) : const Color(0xFFFFA6DA),
-                      width: 1.5,
+                      ],
                     ),
-                    boxShadow: _selectedOption == 1 ? [
-                      BoxShadow(
-                        color: const Color(0xFFEF39A3).withOpacity(0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
-                      )
-                    ] : null,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Annually [RM118.80]',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: _selectedOption == 1 ? Colors.white : Colors.black,
-                        ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Monthly Card
+                  GestureDetector(
+                    onTap: () => setState(() => _selectedOption = 0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 26),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: monthlyColor, width: 1.5),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'RM2.47 / week',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: _selectedOption == 1 ? Colors.white70 : Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
+                      child: Row(
                         children: [
-                          const Icon(Icons.whatshot, color: Colors.orange, size: 20),
-                          const SizedBox(width: 6),
+                          Icon(
+                            _selectedOption == 0 ? Icons.radio_button_checked : Icons.radio_button_off,
+                            color: monthlyColor,
+                          ),
+                          const SizedBox(width: 16),
                           Text(
-                            'Popular Choice',
-                            style: TextStyle(
-                              fontSize: 12,
+                            'Monthly',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: _selectedOption == 1 ? Colors.white : Colors.black,
+                              color: monthlyColor,
                             ),
                           ),
                           const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'Save RM61.10',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFF06292),
-                              ),
+                          Text(
+                            'RM 15.00',
+                            style: GoogleFonts.inter(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: monthlyColor,
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 60),
-              
-              // Subscribe Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Logic for subscription
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD54F),
-                    foregroundColor: const Color(0xFF37474F),
-                    elevation: 4,
-                    shadowColor: const Color(0xFFFFD54F).withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
-                    'Subscribe Now',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Bottom Text
+                  Text(
+                    'Recurring billing, cancel anytime',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: Colors.grey[600],
                     ),
                   ),
-                ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Continue Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF3A000), // Orange
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'Continue',
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

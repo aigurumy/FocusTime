@@ -43,9 +43,8 @@ class TimerScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 16),
                       // Header
@@ -720,7 +719,6 @@ class TimerScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-              ),
             );
           },
         ),

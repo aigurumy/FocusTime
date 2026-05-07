@@ -5,6 +5,7 @@ import '../providers/timer_provider.dart';
 import 'main_screen.dart';
 import 'focus_time_tone_screen.dart';
 import 'break_time_tone_screen.dart';
+import '../providers/auth_provider.dart';
 
 class SettingsScreenView extends ConsumerStatefulWidget {
   const SettingsScreenView({super.key});
@@ -53,24 +54,28 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
               ),
               const SizedBox(height: 30),
 
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.lightbulb_outline, size: 28),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.lightbulb_outline, size: 28),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Text(
                           'What are we working on?',
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          'Capture your intent. Let the focus follow.',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 40.0),
+                    child: Text(
+                      'Capture your intent. Let the focus follow.',
+                      style: TextStyle(fontSize: 14, color: Color(0xFF322D2D)),
                     ),
                   ),
                 ],
@@ -191,6 +196,27 @@ class _SettingsScreenViewState extends ConsumerState<SettingsScreenView> {
                 ),
               ),
               const SizedBox(height: 40),
+              
+              // Logout Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => ref.read(authLoadingProvider.notifier).signOut(),
+                  icon: const Icon(Icons.logout, color: Colors.red),
+                  label: const Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -224,9 +250,9 @@ class _ToneSelectionItem extends StatelessWidget {
             Text(
               title,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF070D24),
+                color: Color(0xFF070D24),
               ),
             ),
             Row(
@@ -234,7 +260,7 @@ class _ToneSelectionItem extends StatelessWidget {
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Colors.grey,
                   ),
                 ),

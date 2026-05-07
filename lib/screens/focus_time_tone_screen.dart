@@ -136,9 +136,10 @@ class _FocusTimeToneScreenState extends ConsumerState<FocusTimeToneScreen> {
                               Text(
                                 tone,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
                                   color: isSelected ? const Color(0xFF5E35B1) : Colors.black87,
+                                  letterSpacing: 1.0,
                                 ),
                               ),
                               if (isSelected)

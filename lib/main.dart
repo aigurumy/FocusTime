@@ -4,12 +4,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
-import 'screens/main_screen.dart';
 import 'providers/settings_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'main_wrapper.dart';
+
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'core/supabase_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    anonKey: SupabaseConfig.anonKey,
+  );
 
   // Dark icons for light background
   SystemChrome.setSystemUIOverlayStyle(
@@ -52,6 +60,7 @@ class FocusTimeAppWrapper extends ConsumerWidget {
   }
 }
 
+
 class FocusTimeApp extends StatelessWidget {
   const FocusTimeApp({super.key});
 
@@ -64,7 +73,7 @@ class FocusTimeApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme).apply(
+        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme).apply(
           bodyColor: const Color(0xFF070D24),
           displayColor: const Color(0xFF070D24),
         ),
@@ -74,7 +83,7 @@ class FocusTimeApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: const MainWrapper(),
     );
   }
 }

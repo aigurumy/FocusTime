@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'auth_provider.dart';
 
 class UserProfile {
   final String name;
@@ -31,11 +32,28 @@ class UserProfile {
 class UserProfileNotifier extends Notifier<UserProfile> {
   @override
   UserProfile build() {
+    // Watch the current user from Supabase
+    final user = ref.watch(currentUserProvider);
+    
+    // Default values if no user is logged in
+    if (user == null) {
+      return UserProfile(
+        name: "Guest User",
+        email: "not logged in",
+        goalResolution: "Please login to save your goals.",
+        profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&h=300&auto=format&fit=crop',
+      );
+    }
+
+    // Populate from Supabase user data
+    final name = user.userMetadata?['full_name'] ?? user.email?.split('@').first ?? "User";
+    final avatar = user.userMetadata?['avatar_url'] ?? 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&h=300&auto=format&fit=crop';
+
     return UserProfile(
-      name: "User's Name",
-      email: "user@email.com",
-      goalResolution: "My goal this year is to make million and have healthy and fit body",
-      profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&h=300&auto=format&fit=crop',
+      name: name,
+      email: user.email ?? "",
+      goalResolution: "Focus on your goals today!",
+      profileImageUrl: avatar,
     );
   }
 

@@ -69,21 +69,46 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
     final totalHours = totalMinutes / 60.0;
     final sessionsCount = thisWeek.length;
 
-    // Build daily data for the chart based on selected period
-    final int daysCount = _selectedPeriod == 'Day' ? 1 : (_selectedPeriod == 'Week' ? 7 : 30);
-    final List<_DayData> chartData = List.generate(daysCount, (i) {
-      final day = now.subtract(Duration(days: (daysCount - 1) - i));
-      final dayAchievements = achievements.where((a) =>
-          a.timestamp.year == day.year &&
-          a.timestamp.month == day.month &&
-          a.timestamp.day == day.day);
-      final mins = dayAchievements.fold<int>(0, (sum, a) => sum + a.durationMinutes);
-      return _DayData(
-        dayLabel: daysCount <= 7 ? _weekdayShort(day.weekday) : (i % 5 == 0 ? '${day.day}' : ''),
-        dateLabel: daysCount <= 7 ? '${day.day}' : '',
-        minutes: mins,
-      );
-    });
+    // Build data for the chart based on selected period
+    List<_DayData> chartData = [];
+    if (_selectedPeriod == 'Day') {
+      for (int i = 0; i < 24; i++) {
+        final hourAchievements = achievements.where((a) =>
+            a.timestamp.year == now.year &&
+            a.timestamp.month == now.month &&
+            a.timestamp.day == now.day &&
+            a.timestamp.hour == i);
+        final mins = hourAchievements.fold<int>(0, (sum, a) => sum + a.durationMinutes);
+        
+        String hourLabel = '';
+        if (i % 6 == 0 || i == 23) {
+          final ampm = i >= 12 ? 'pm' : 'am';
+          final h = i % 12 == 0 ? 12 : i % 12;
+          hourLabel = '$h$ampm';
+        }
+        
+        chartData.add(_DayData(
+          dayLabel: hourLabel,
+          dateLabel: '',
+          minutes: mins,
+        ));
+      }
+    } else {
+      final int daysCount = _selectedPeriod == 'Week' ? 7 : 30;
+      chartData = List.generate(daysCount, (i) {
+        final day = now.subtract(Duration(days: (daysCount - 1) - i));
+        final dayAchievements = achievements.where((a) =>
+            a.timestamp.year == day.year &&
+            a.timestamp.month == day.month &&
+            a.timestamp.day == day.day);
+        final mins = dayAchievements.fold<int>(0, (sum, a) => sum + a.durationMinutes);
+        return _DayData(
+          dayLabel: daysCount <= 7 ? _weekdayShort(day.weekday) : (i % 5 == 0 ? '${day.day}' : ''),
+          dateLabel: daysCount <= 7 ? '${day.day}' : '',
+          minutes: mins,
+        );
+      });
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -114,17 +139,6 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: textDark,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                sessionsCount > 0
-                    ? 'You\'ve maintained a deep focus rhythm this week. Your peak performance usually occurs between 9:00 AM and 11:30 AM'
-                    : 'Complete focus sessions to see your weekly insights here.',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: textLight,
-                  height: 1.5,
                 ),
               ),
               const SizedBox(height: 20),
@@ -411,41 +425,88 @@ class _FocusChart extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 120,
-            child: CustomPaint(
-              size: const Size(double.infinity, 120),
-              painter: _ChartPainter(data: data),
-            ),
-          ),
-          const SizedBox(height: 10),
-          // Day labels
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: data.map((d) => SizedBox(
-              width: 36,
-              child: Column(
-                children: [
-                  Text(
-                    d.dayLabel,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xCC070D24),
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    d.dateLabel,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0x80070D24),
-                    ),
-                  ),
-                ],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Y-axis labels
+              SizedBox(
+                width: 32,
+                height: 120,
+                child: Builder(builder: (context) {
+                  final maxMins = data.isEmpty ? 0 : data.map((d) => d.minutes).reduce((a, b) => a > b ? a : b);
+                  final effMax = maxMins > 0 ? maxMins.toDouble() : 60.0;
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(4, (i) {
+                      final val = effMax * (3 - i) / 3;
+                      String lbl;
+                      if (val == 0) {
+                        lbl = '0';
+                      } else if (val >= 60) {
+                        final h = val / 60;
+                        lbl = '${h.toStringAsFixed(h.truncateToDouble() == h ? 0 : 1)}h';
+                      } else {
+                        lbl = '${val.toInt()}m';
+                      }
+                      return Text(
+                        lbl,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0x99070D24),
+                        ),
+                      );
+                    }),
+                  );
+                }),
               ),
-            )).toList(),
+              const SizedBox(width: 4),
+              // Chart and Day Labels
+              Expanded(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 120,
+                      child: CustomPaint(
+                        size: const Size(double.infinity, 120),
+                        painter: _ChartPainter(data: data),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Day labels
+                    Row(
+                      mainAxisAlignment: data.length > 1 ? MainAxisAlignment.spaceBetween : MainAxisAlignment.center,
+                      children: data.map((d) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (d.dayLabel.isNotEmpty)
+                            Text(
+                              d.dayLabel,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xCC070D24),
+                              ),
+                            ),
+                          if (d.dateLabel.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              d.dateLabel,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0x80070D24),
+                              ),
+                            ),
+                          ],
+                        ],
+                      )).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -465,10 +526,10 @@ class _ChartPainter extends CustomPainter {
     final effectiveMax = maxMinutes > 0 ? maxMinutes.toDouble() : 60.0;
 
     final points = <Offset>[];
-    final segmentWidth = size.width / (data.length - 1);
+    final segmentWidth = data.length > 1 ? size.width / (data.length - 1) : 0.0;
 
     for (int i = 0; i < data.length; i++) {
-      final x = i * segmentWidth;
+      final x = data.length > 1 ? i * segmentWidth : size.width / 2;
       final y = size.height - (data[i].minutes / effectiveMax * (size.height - 10));
       points.add(Offset(x, y.clamp(5.0, size.height - 5.0)));
     }
