@@ -305,7 +305,7 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
                     const SizedBox(height: 8),
                     Text(
                       sessionsCount > 0
-                          ? 'You\'ve hit your daily goal ${(sessionsCount / 3).ceil()} times this week.'
+                          ? 'Keep going to achieve your goal'
                           : 'Start a focus session to begin tracking.',
                       style: const TextStyle(
                         fontSize: 13,

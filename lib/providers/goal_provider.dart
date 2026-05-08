@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'auth_provider.dart';
 
 class Goal {
   final String id;
@@ -20,6 +22,33 @@ class Goal {
     DateTime? deadline,
     this.isAchieved = false,
   }) : deadline = deadline ?? DateTime.now().add(const Duration(days: 30));
+
+  Map<String, dynamic> toMap() {
+    final user = sb.Supabase.instance.client.auth.currentUser;
+    return {
+      if (user != null) 'user_id': user.id,
+      'name': name,
+      'current_step': currentStep,
+      'notes': notes,
+      'target_hours': targetHours,
+      'logged_hours': loggedHours,
+      'deadline': deadline.toIso8601String(),
+      'is_achieved': isAchieved,
+    };
+  }
+
+  factory Goal.fromMap(Map<String, dynamic> map) {
+    return Goal(
+      id: map['id'],
+      name: map['name'],
+      currentStep: map['current_step'] ?? '',
+      notes: map['notes'] ?? '',
+      targetHours: map['target_hours'] ?? 10,
+      loggedHours: (map['logged_hours'] as num?)?.toDouble() ?? 0.0,
+      deadline: DateTime.parse(map['deadline']),
+      isAchieved: map['is_achieved'] ?? false,
+    );
+  }
 
   double get progressPercent =>
       targetHours > 0 ? (loggedHours / targetHours).clamp(0.0, 1.0) : 0.0;
@@ -49,53 +78,114 @@ class Goal {
 }
 
 class GoalListNotifier extends Notifier<List<Goal>> {
+  sb.SupabaseClient get _supabase => sb.Supabase.instance.client;
+
   @override
   List<Goal> build() {
+    // Watch auth state — this causes the provider to rebuild on login/logout
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return []; // Clear data immediately on logout
+    _fetchGoals(user.id);
     return [];
   }
 
-  void addGoal(Goal goal) {
-    state = [...state, goal];
+  Future<void> _fetchGoals(String userId) async {
+    try {
+      final data = await _supabase
+          .from('goals')
+          .select()
+          .eq('user_id', userId)
+          .order('created_at', ascending: true);
+      
+      state = (data as List).map((g) => Goal.fromMap(g)).toList();
+    } catch (e) {
+      print('Error fetching goals: $e');
+    }
   }
 
-  void removeGoal(String id) {
-    state = state.where((g) => g.id != id).toList();
+  Future<void> addGoal(Goal goal) async {
+    try {
+      final data = await _supabase
+          .from('goals')
+          .insert(goal.toMap())
+          .select()
+          .single();
+      
+      final newGoal = Goal.fromMap(data);
+      state = [...state, newGoal];
+    } catch (e) {
+      print('Error adding goal: $e');
+    }
   }
 
-  void markAchieved(String id) {
-    state = [
-      for (final g in state)
-        if (g.id == id) g.copyWith(isAchieved: true) else g,
-    ];
+  Future<void> removeGoal(String id) async {
+    try {
+      await _supabase.from('goals').delete().eq('id', id);
+      state = state.where((g) => g.id != id).toList();
+    } catch (e) {
+      print('Error removing goal: $e');
+    }
   }
 
-  void updateGoal(String id, {String? name, String? currentStep, String? notes, int? targetHours, double? loggedHours, DateTime? deadline}) {
-    state = [
-      for (final g in state)
-        if (g.id == id)
-          g.copyWith(
-            name: name,
-            currentStep: currentStep,
-            notes: notes,
-            targetHours: targetHours,
-            loggedHours: loggedHours,
-            deadline: deadline,
-          )
-        else
-          g,
-    ];
+  Future<void> markAchieved(String id) async {
+    try {
+      await _supabase.from('goals').update({'is_achieved': true}).eq('id', id);
+      state = [
+        for (final g in state)
+          if (g.id == id) g.copyWith(isAchieved: true) else g,
+      ];
+    } catch (e) {
+      print('Error marking goal achieved: $e');
+    }
   }
 
-  /// Log focus minutes to a specific goal
-  void logFocusMinutes(String id, int minutes) {
-    final hours = minutes / 60.0;
-    state = [
-      for (final g in state)
-        if (g.id == id)
-          g.copyWith(loggedHours: g.loggedHours + hours)
-        else
-          g,
-    ];
+  Future<void> updateGoal(String id, {String? name, String? currentStep, String? notes, int? targetHours, double? loggedHours, DateTime? deadline}) async {
+    final updates = {
+      if (name != null) 'name': name,
+      if (currentStep != null) 'current_step': currentStep,
+      if (notes != null) 'notes': notes,
+      if (targetHours != null) 'target_hours': targetHours,
+      if (loggedHours != null) 'logged_hours': loggedHours,
+      if (deadline != null) 'deadline': deadline.toIso8601String(),
+    };
+
+    try {
+      await _supabase.from('goals').update(updates).eq('id', id);
+      state = [
+        for (final g in state)
+          if (g.id == id)
+            g.copyWith(
+              name: name,
+              currentStep: currentStep,
+              notes: notes,
+              targetHours: targetHours,
+              loggedHours: loggedHours,
+              deadline: deadline,
+            )
+          else
+            g,
+      ];
+    } catch (e) {
+      print('Error updating goal: $e');
+    }
+  }
+
+  Future<void> logFocusMinutes(String id, int minutes) async {
+    final goal = state.firstWhere((g) => g.id == id);
+    final newLoggedHours = goal.loggedHours + (minutes / 60.0);
+    
+    try {
+      await _supabase.from('goals').update({'logged_hours': newLoggedHours}).eq('id', id);
+      state = [
+        for (final g in state)
+          if (g.id == id)
+            g.copyWith(loggedHours: newLoggedHours)
+          else
+            g,
+      ];
+    } catch (e) {
+      print('Error logging focus minutes: $e');
+    }
   }
 }
 

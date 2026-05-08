@@ -1,14 +1,16 @@
-import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
+import 'auth_provider.dart';
 
 class Achievement {
+  final String? id; // Supabase UUID
   final String topic;
   final String log;
   final int durationMinutes;
   final DateTime timestamp;
 
   Achievement({
+    this.id,
     required this.topic,
     required this.log,
     required this.durationMinutes,
@@ -16,19 +18,22 @@ class Achievement {
   });
 
   Map<String, dynamic> toMap() {
+    final user = sb.Supabase.instance.client.auth.currentUser;
     return {
+      if (user != null) 'user_id': user.id,
       'topic': topic,
       'log': log,
-      'durationMinutes': durationMinutes,
+      'duration_minutes': durationMinutes,
       'timestamp': timestamp.toIso8601String(),
     };
   }
 
   factory Achievement.fromMap(Map<String, dynamic> map) {
     return Achievement(
+      id: map['id'],
       topic: map['topic'] ?? 'Untitled',
       log: map['log'] ?? '',
-      durationMinutes: map['durationMinutes'] ?? 0,
+      durationMinutes: map['duration_minutes'] ?? 0,
       timestamp: map['timestamp'] != null 
           ? DateTime.parse(map['timestamp']) 
           : DateTime.now(),
@@ -37,41 +42,48 @@ class Achievement {
 }
 
 class AchievementNotifier extends Notifier<List<Achievement>> {
-  static const String _key = 'achievements_list';
-  SharedPreferences? _prefs;
+  sb.SupabaseClient get _supabase => sb.Supabase.instance.client;
 
   @override
   List<Achievement> build() {
-    _initPrefs();
+    // Watch auth state — rebuilds and clears data on login/logout
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return [];
+    _fetchAchievements(user.id);
     return [];
   }
 
-  Future<void> _initPrefs() async {
-    _prefs = await SharedPreferences.getInstance();
-    final String? data = _prefs?.getString(_key);
-    if (data != null) {
-      final List<dynamic> decodedList = jsonDecode(data);
-      final List<Achievement> loadedList = decodedList
-          .map((item) => Achievement.fromMap(item as Map<String, dynamic>))
-          .toList();
-      state = loadedList;
+  Future<void> _fetchAchievements(String userId) async {
+    try {
+      final data = await _supabase
+          .from('achievements')
+          .select()
+          .eq('user_id', userId)
+          .order('timestamp', ascending: false);
+      
+      state = (data as List).map((a) => Achievement.fromMap(a)).toList();
+    } catch (e) {
+      print('Error fetching achievements: $e');
     }
   }
 
   Future<void> addAchievement(Achievement achievement) async {
-    final newList = [achievement, ...state];
-    // Keep max 5 items to keep UI clean
-    if (newList.length > 5) {
-      newList.removeRange(5, newList.length);
+    try {
+      final data = await _supabase
+          .from('achievements')
+          .insert(achievement.toMap())
+          .select()
+          .single();
+      
+      final newAchievement = Achievement.fromMap(data);
+      state = [newAchievement, ...state];
+      
+      // Keep max 5 items in the local state if needed for UI performance, 
+      // but usually we want to see the full log. 
+      // For now, let's keep it simple and show all.
+    } catch (e) {
+      print('Error adding achievement: $e');
     }
-    state = newList;
-    await _saveToPrefs();
-  }
-
-  Future<void> _saveToPrefs() async {
-    if (_prefs == null) return;
-    final List<Map<String, dynamic>> mappedList = state.map((e) => e.toMap()).toList();
-    await _prefs?.setString(_key, jsonEncode(mappedList));
   }
 }
 

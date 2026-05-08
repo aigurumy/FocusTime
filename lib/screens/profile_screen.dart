@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../providers/user_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -14,65 +15,36 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   int _selectedOption = 1; // 0 for Monthly, 1 for Annual
+  XFile? _localImage; // holds local preview before upload completes
+  bool _isUploadingImage = false;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
     
     if (image != null) {
-      ref.read(userProfileProvider.notifier).updateProfileImage(image.path);
+      // Show local preview instantly
+      setState(() {
+        _localImage = image;
+        _isUploadingImage = true;
+      });
+      // Upload to Supabase Storage in background
+      await ref.read(userProfileProvider.notifier).updateProfileImage(image);
+      setState(() => _isUploadingImage = false);
     }
   }
 
-  void _showEditProfileDialog(UserProfile profile) {
-    final nameController = TextEditingController(text: profile.name);
-    final goalController = TextEditingController(text: profile.goalResolution);
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Profile'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter your name',
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: goalController,
-              maxLines: 3,
-              decoration: const InputDecoration(
-                labelText: "Goal's Resolution",
-                hintText: 'Enter your goal for this year',
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              ref.read(userProfileProvider.notifier).updateName(nameController.text);
-              ref.read(userProfileProvider.notifier).updateGoalResolution(goalController.text);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4A68FF),
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
+  ImageProvider _getLocalImageProvider(XFile file) {
+    if (kIsWeb) {
+      // On web, XFile.path is a blob URL
+      return NetworkImage(file.path);
+    }
+    return FileImage(File(file.path));
   }
 
   ImageProvider _getImageProvider(String path) {
@@ -80,6 +52,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       return NetworkImage(path);
     }
     return FileImage(File(path));
+  }
+
+  void _showEditDialog(String field, String currentValue) {
+    final controller = TextEditingController(text: currentValue);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Edit ${field == 'name' ? 'Name' : 'Quote'}',
+          style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+        ),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: 'Enter new ${field == 'name' ? 'name' : 'quote'}',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          maxLines: field == 'quote' ? 3 : 1,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                if (field == 'name') {
+                  ref.read(userProfileProvider.notifier).updateName(controller.text.trim());
+                } else {
+                  ref.read(userProfileProvider.notifier).updateGoalResolution(controller.text.trim());
+                }
+              }
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF070D24),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -97,29 +116,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Stack(
+                const Stack(
                   alignment: Alignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Profile',
                       style: TextStyle(
                         color: Color(0xFF070D24),
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => _showEditProfileDialog(userProfile),
-                        child: const Text(
-                          'Edit',
-                          style: TextStyle(
-                            color: Color(0xFF070D24),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
                       ),
                     ),
                   ],
@@ -133,23 +138,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       height: 140,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: _getImageProvider(userProfile.profileImageUrl),
-                          fit: BoxFit.cover,
-                        ),
+                        color: Colors.grey.shade100,
+                        // Use local preview first, then fall back to Supabase URL
+                        image: _localImage != null
+                            ? DecorationImage(
+                                image: _getLocalImageProvider(_localImage!),
+                                fit: BoxFit.cover,
+                              )
+                            : userProfile.profileImageUrl.isNotEmpty
+                                ? DecorationImage(
+                                    image: _getImageProvider(userProfile.profileImageUrl),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                         border: Border.all(color: Colors.grey.shade200, width: 2),
                       ),
+                      child: (_localImage == null && userProfile.profileImageUrl.isEmpty)
+                          ? Icon(
+                              Icons.person,
+                              size: 80,
+                              color: Colors.grey.shade400,
+                            )
+                          : null,
                     ),
+                    // Upload spinner overlay
+                    if (_isUploadingImage)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withOpacity(0.4),
+                          ),
+                          child: const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          ),
+                        ),
+                      ),
                     Positioned(
                       bottom: 0,
                       right: 4,
                       child: InkWell(
-                        onTap: () => _pickImage(),
+                        onTap: _isUploadingImage ? null : () => _pickImage(),
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF070D24),
+                          decoration: BoxDecoration(
+                            color: _isUploadingImage
+                                ? Colors.grey
+                                : const Color(0xFF070D24),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -163,13 +202,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  userProfile.name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF070D24),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      userProfile.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF070D24),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () => _showEditDialog('name', userProfile.name),
+                      child: const Icon(
+                        Icons.edit,
+                        size: 16,
+                        color: Color(0xFF78909C),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -183,16 +236,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 // Quote Section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    '“ ${userProfile.goalResolution} “',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xFF070D24),
-                      height: 1.4,
-                    ),
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Text(
+                          '“ ${userProfile.goalResolution} “',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Color(0xFF070D24),
+                            height: 1.4,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: -10,
+                        top: -10,
+                        child: IconButton(
+                          icon: const Icon(Icons.edit, size: 18, color: Color(0xFF78909C)),
+                          onPressed: () => _showEditDialog('quote', userProfile.goalResolution),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 40),
