@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../providers/goal_provider.dart';
+import '../providers/user_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class GoalScreen extends ConsumerWidget {
   const GoalScreen({super.key});
@@ -211,6 +213,14 @@ class GoalScreen extends ConsumerWidget {
   }
 
   void _showNewGoalDialog(BuildContext context, WidgetRef ref) {
+    final userProfile = ref.read(userProfileProvider);
+    final activeGoals = ref.read(activeGoalsProvider);
+
+    if (!userProfile.isPremium && activeGoals.isNotEmpty) {
+      _showUpgradePrompt(context);
+      return;
+    }
+
     final now = DateTime.now();
     final nameController = TextEditingController();
     final hoursController = TextEditingController(text: '10');
@@ -671,6 +681,48 @@ class GoalScreen extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+
+  void _showUpgradePrompt(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          'Premium Feature',
+          style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.star, size: 64, color: Color(0xFFF1A900)),
+            const SizedBox(height: 16),
+            Text(
+              'Free members are limited to 1 active goal. Upgrade to Premium for unlimited goals!',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(fontSize: 16),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Maybe Later', style: TextStyle(color: Colors.grey[600])),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFF1A900),
+              foregroundColor: Colors.black,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Upgrade Now'),
+          ),
+        ],
+      ),
     );
   }
 }

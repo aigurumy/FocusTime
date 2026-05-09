@@ -9,6 +9,16 @@ class MainWrapper extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Listen for auth state changes to redirect to Focus page on login
+    ref.listen(authStateProvider, (previous, next) {
+      next.whenData((data) {
+        if (data.session != null && (previous == null || previous.value?.session == null)) {
+          // User just logged in, reset navigation to Focus page (index 2)
+          ref.read(navigationIndexProvider.notifier).setIndex(2);
+        }
+      });
+    });
+
     final authState = ref.watch(authStateProvider);
 
     return authState.when(

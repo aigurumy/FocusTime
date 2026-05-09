@@ -643,74 +643,75 @@ class TimerScreen extends ConsumerWidget {
                                 ],
                               ),
                               children: [
-                                if (achievements.length > 1) ...[
-                                  const Divider(color: Color(0xFFE0E0E0), height: 24),
-                                  ...achievements.skip(1).map((achievement) {
-                                    String dateStr = '${achievement.timestamp.day} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][achievement.timestamp.month - 1]}';
-                                    int index = achievements.indexOf(achievement);
-                                    Color logColor = index >= 2 ? Colors.grey.shade600 : const Color(0xFF26A69A);
+                                  if (achievements.length > 1) ...[
+                                    const Divider(color: Color(0xFFE0E0E0), height: 24),
+                                    ...achievements.skip(1).take(4).map((achievement) {
+                                      String dateStr = '${achievement.timestamp.day} ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][achievement.timestamp.month - 1]}';
+                                      int index = achievements.indexOf(achievement);
+                                      Color logColor = index >= 2 ? Colors.grey.shade600 : const Color(0xFF26A69A);
 
-                                    return Padding(
-                                      padding: const EdgeInsets.only(bottom: 16.0),
+                                      return Padding(
+                                        padding: const EdgeInsets.only(bottom: 16.0),
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    achievement.topic,
+                                                    style: const TextStyle(
+                                                      fontSize: 14,
+                                                      color: Color(0xFF070D24),
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 2),
+                                                  Text(
+                                                    achievement.log,
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: logColor,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Text(
+                                              dateStr,
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                    const SizedBox(height: 8),
+                                    InkWell(
+                                      onTap: () {
+                                        ref.read(navigationIndexProvider.notifier).setIndex(0, scrollToBottom: true);
+                                      },
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  achievement.topic,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Color(0xFF070D24),
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 2),
-                                                Text(
-                                                  achievement.log,
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: logColor,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: const [
                                           Text(
-                                            dateStr,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black54,
+                                            'Click for more',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Color(0xFF070D24),
+                                              fontWeight: FontWeight.w700,
                                             ),
                                           ),
+                                          SizedBox(width: 4),
+                                          Icon(Icons.arrow_forward_rounded, size: 16, color: Color(0xFF070D24)),
                                         ],
                                       ),
-                                    );
-                                  }),
-                                  const SizedBox(height: 8),
-                                  InkWell(
-                                    onTap: () {
-                                      ref.read(navigationIndexProvider.notifier).setIndex(0, scrollToBottom: true);
-                                    },
-                                    child: const Row(
-                                      children: [
-                                        Text(
-                                          'Click for more',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Color(0xFF070D24),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        SizedBox(width: 8),
-                                        Icon(Icons.arrow_forward, size: 16, color: Colors.black87),
-                                      ],
                                     ),
-                                  ),
-                                ],
+                                  ],
                               ],
                             ),
                           ),

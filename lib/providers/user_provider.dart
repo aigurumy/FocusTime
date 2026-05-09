@@ -10,12 +10,14 @@ class UserProfile {
   final String email;
   final String goalResolution;
   final String profileImageUrl;
+  final bool isPremium;
 
   UserProfile({
     required this.name,
     required this.email,
     required this.goalResolution,
     required this.profileImageUrl,
+    this.isPremium = false,
   });
 
   UserProfile copyWith({
@@ -23,12 +25,14 @@ class UserProfile {
     String? email,
     String? goalResolution,
     String? profileImageUrl,
+    bool? isPremium,
   }) {
     return UserProfile(
       name: name ?? this.name,
       email: email ?? this.email,
       goalResolution: goalResolution ?? this.goalResolution,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      isPremium: isPremium ?? this.isPremium,
     );
   }
 }
@@ -44,6 +48,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
         email: "not logged in",
         goalResolution: "Please login to save your goals.",
         profileImageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&h=300&auto=format&fit=crop',
+        isPremium: false,
       );
     }
 
@@ -59,6 +64,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
       email: user.email ?? "",
       goalResolution: "Focus on your goals today!",
       profileImageUrl: avatar,
+      isPremium: false,
     );
   }
 
@@ -66,7 +72,7 @@ class UserProfileNotifier extends Notifier<UserProfile> {
     try {
       final data = await ref.read(supabaseClientProvider)
           .from('profiles')
-          .select()
+          .select('full_name, goal_resolution, avatar_url')
           .eq('id', userId)
           .single();
       
@@ -74,9 +80,10 @@ class UserProfileNotifier extends Notifier<UserProfile> {
         name: data['full_name'],
         goalResolution: data['goal_resolution'],
         profileImageUrl: data['avatar_url'],
+        isPremium: false, // Default to false if column is missing or not fetched
       );
     } catch (e) {
-      // Profile might not exist yet, we'll create it on first update
+      // Profile might not exist yet, or column is missing
       print('Error fetching profile: $e');
     }
   }
@@ -91,11 +98,18 @@ class UserProfileNotifier extends Notifier<UserProfile> {
         'full_name': profile.name,
         'goal_resolution': profile.goalResolution,
         'avatar_url': profile.profileImageUrl,
+        'is_premium': profile.isPremium,
         'updated_at': DateTime.now().toIso8601String(),
       });
     } catch (e) {
       print('Error saving profile: $e');
     }
+  }
+
+  Future<void> updateSubscription(bool isPremium) async {
+    final newState = state.copyWith(isPremium: isPremium);
+    state = newState;
+    await _saveProfile(newState);
   }
 
   Future<void> updateName(String name) async {

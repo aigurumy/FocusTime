@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'main_screen.dart';
 import '../providers/achievement_provider.dart';
+import '../providers/coach_provider.dart';
+import '../providers/goal_provider.dart';
 
 class InsightScreen extends ConsumerStatefulWidget {
   const InsightScreen({super.key});
@@ -12,7 +14,7 @@ class InsightScreen extends ConsumerStatefulWidget {
 
 class _InsightScreenState extends ConsumerState<InsightScreen> {
   final ScrollController _scrollController = ScrollController();
-  String _selectedPeriod = 'Week';
+  String _selectedPeriod = 'Day';
 
   @override
   void dispose() {
@@ -59,6 +61,7 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
     const cardBorder = Color(0xFFE6E4DC);
 
     final achievements = ref.watch(achievementProvider);
+    final coach = ref.watch(coachProvider);
 
     // Compute stats from achievements
     final now = DateTime.now();
@@ -131,6 +134,143 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
                 ),
               ),
               const SizedBox(height: 24),
+
+              // Coach Analysis Section
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF07515D), Color(0xFF0D7B8C)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF07515D).withAlpha(40),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          coach.statusEmoji,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Coach Analysis',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      coach.compliment,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(20),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.lightbulb_outline, color: Color(0xFFFFAB40), size: 20),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              coach.advice,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                                height: 1.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (coach.goalAnalyses.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      const Divider(color: Colors.white24, height: 1),
+                      const SizedBox(height: 16),
+                      ...coach.goalAnalyses.map((ga) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    ga.goalName,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  ga.isAhead ? 'Ahead' : 'Needs focus',
+                                  style: TextStyle(
+                                    color: ga.isAhead ? const Color(0xFF26A69A) : Colors.orangeAccent,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: ga.progress,
+                                backgroundColor: Colors.white10,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  ga.isAhead ? const Color(0xFF26A69A) : Colors.orangeAccent,
+                                ),
+                                minHeight: 4,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Target: ${ga.requiredDailyHours.toStringAsFixed(1)}h / day to finish on time',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )).toList(),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
 
               // Weekly Insights Header
               const Text(
@@ -363,7 +503,7 @@ class _InsightScreenState extends ConsumerState<InsightScreen> {
                         ),
                       )
                     else
-                      ...achievements.take(5).map((a) => _MilestoneItem(achievement: a)),
+                      ...achievements.take(10).map((a) => _MilestoneItem(achievement: a)),
                   ],
                 ),
               ),

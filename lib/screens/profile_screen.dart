@@ -59,24 +59,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Edit ${field == 'name' ? 'Name' : 'Quote'}',
-          style: GoogleFonts.inter(fontWeight: FontWeight.bold),
+          style: GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: const Color(0xFF070D24),
+          ),
         ),
         content: TextField(
           controller: controller,
           autofocus: true,
+          style: GoogleFonts.inter(fontSize: 16),
           decoration: InputDecoration(
             hintText: 'Enter new ${field == 'name' ? 'name' : 'quote'}',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(7)),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(7),
+              borderSide: const BorderSide(color: Color(0xFF8DC815), width: 2),
+            ),
           ),
           maxLines: field == 'quote' ? 3 : 1,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.inter(
+                color: const Color(0xFF4B4848),
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -90,11 +108,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF070D24),
+              backgroundColor: const Color(0xFF8DC815),
               foregroundColor: Colors.white,
+              elevation: 0,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: const Text('Save'),
+            child: Text(
+              'Save',
+              style: GoogleFonts.inter(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
           ),
         ],
       ),
@@ -421,18 +447,28 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Logic for subscription
-                    },
+                    onPressed: userProfile.isPremium 
+                      ? null 
+                      : () async {
+                          await ref.read(userProfileProvider.notifier).updateSubscription(true);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Welcome to FocusTime Premium! 🎉'),
+                                backgroundColor: Color(0xFF59A98C),
+                              ),
+                            );
+                          }
+                        },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF1A900), // Specified Orange
+                      backgroundColor: userProfile.isPremium ? Colors.grey : const Color(0xFFF1A900), // Specified Orange
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Text(
-                      'Subscribe',
+                      userProfile.isPremium ? 'Already Premium' : 'Subscribe',
                       style: GoogleFonts.inter(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
